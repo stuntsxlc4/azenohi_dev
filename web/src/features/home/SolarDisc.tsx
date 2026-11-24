@@ -12,18 +12,20 @@ void main() {
   // the solar image vertically and the opaque limb eclipses its lower half.
   float r = length(offset * vec2(1.0, 1.45));
   float aa = max(fwidth(r), 0.00015);
-  float photosphere = 1.0 - smoothstep(0.005-aa, 0.005+aa, r);
+  float photosphere = 1.0 - smoothstep(0.0065-aa, 0.0065+aa, r);
   float visible = smoothstep(-0.002-aa, -0.002+aa, offset.y);
-  float aureole = exp(-length(offset * vec2(0.67, 1.6)) * 54.0);
-  float veil = exp(-length(offset * vec2(0.85, 1.32)) * 10.0);
+  float aureole = exp(-length(offset * vec2(0.67, 1.45)) * 42.0);
+  float veil = exp(-length(offset * vec2(0.76, 1.26)) * 9.0);
   // Low-angle haze lights the sky above the limb. The weaker optical flare
   // below it leaves the cloud filaments and city lights visible.
-  float skyWeight = mix(0.26, 1.0, smoothstep(-0.034,0.006,offset.y));
+  float skyWeight = mix(0.16, 1.0, smoothstep(-0.078,0.004,offset.y));
   float streak = exp(-abs(offset.y)*295.0 - abs(offset.x)*18.0);
   float opacity = (1.0 - smoothstep(0.33,0.49,length(offset))) *
-    (skyWeight*(1.3*veil + 1.4*aureole) + 0.68*streak + photosphere*visible);
-  vec3 radiance = vec3(1.5,0.10,0.07) + aureole*vec3(2.7,0.50,0.17)
-    + streak*vec3(2.1,0.66,0.38) + photosphere*visible*vec3(11.0,6.6,3.8);
+    (skyWeight*(1.30*veil + 1.32*aureole) + 0.68*streak + photosphere*visible);
+  // A copper core fades through coral into the cooler twilight sky.
+  vec3 radiance = mix(vec3(0.85,0.038,0.094),vec3(1.28,0.143,0.038),veil*veil)
+    + pow(aureole,1.24)*vec3(3.15,1.42,0.44)
+    + streak*vec3(2.8,1.73,0.68) + photosphere*visible*vec3(13.0,10.0,6.7);
   gl_FragColor = vec4(radiance, min(1.0,opacity));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>

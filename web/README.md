@@ -18,6 +18,8 @@ npm run dev
 
 Frontend jest dostępny na `http://localhost:5173`. Domyślny adres API to `/api/v1`; Vite przekazuje `/api/` i `/health/` do `http://127.0.0.1:8000`. Uruchom równolegle backend zgodnie z [instrukcją API](../api/README.md) albo cały projekt przez [root Compose](../README.md).
 
+Home dobiera profil grafiki do okna i możliwości WebGL. Profil Ultra korzysta z natywnego DPR, map globalnych 8K oraz dokładniejszych danych Europy. Aby porównać lżejszy wariant na komputerze, otwórz `/?quality=balanced`. Przycisk w prawym dolnym rogu zatrzymuje całą animację. Źródła danych planety i warunki wykorzystania znajdują się w [wykazie tekstur](public/home/planet/CREDITS.txt).
+
 Opcjonalne ustawienia w `web/.env`:
 
 ```dotenv

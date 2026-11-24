@@ -9,8 +9,8 @@
 }
 body:has(.home) {
   margin: 0;
-  background: var(--space-black);
-  color: var(--primary-white);
+  background: var(--canvas-background);
+  color: var(--text-primary);
 }
 .home {
   position: relative;
@@ -18,13 +18,8 @@ body:has(.home) {
   min-height: 620px;
   height: 100svh;
   overflow: hidden;
-  background: radial-gradient(
-    ellipse at 67% 56%,
-    color-mix(in srgb, var(--deep-red) 38%, var(--midnight-blue)) 0%,
-    var(--deep-space) 44%,
-    var(--space-black) 86%
-  );
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--sky-gradient);
+  font: var(--type-body);
 }
 .home:before {
   content: '';
@@ -48,15 +43,14 @@ body:has(.home) {
 .home-header,
 .home-foot {
   position: absolute;
-  left: 5.2%;
-  right: 5.2%;
+  inset-inline: max(var(--page-gutter), calc((100% - var(--content-limit)) / 2));
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .home-header {
   top: 0;
-  height: clamp(74px, 10.5vh, 110px);
+  height: var(--header-height);
 }
 .wordmark {
   display: flex;
@@ -68,7 +62,7 @@ body:has(.home) {
   white-space: nowrap;
 }
 .wordmark b {
-  color: var(--azeno-red);
+  color: var(--brand-accent);
 }
 .wordmark small {
   font-size: 1em;
@@ -80,55 +74,55 @@ body:has(.home) {
   width: 1.45em;
   height: 1em;
   margin-right: 0.44em;
-  background: var(--azeno-red);
+  background: var(--brand-accent);
   clip-path: polygon(0 100%, 44% 0, 76% 0, 32% 100%, 0 100%, 44% 100%, 72% 34%, 100% 34%, 72% 100%);
 }
 .home-header nav {
   display: flex;
   gap: clamp(20px, 4.4vw, 76px);
   align-self: stretch;
-  align-items: stretch;
+  align-items: center;
 }
 .home-header nav > * {
+  min-height: var(--control-height);
   display: flex;
   align-items: center;
-  font-weight: 550;
-  font-size: clamp(16px, 1.45vw, 25px);
+  font: var(--type-nav);
   letter-spacing: 0;
 }
 .home-header nav span {
-  color: var(--cloud-silver);
+  color: var(--text-secondary);
+  cursor: not-allowed;
 }
 .home-header a {
-  color: var(--primary-white);
+  color: var(--text-primary);
   text-decoration: none;
   position: relative;
 }
 .home-header a:after {
   content: '';
   position: absolute;
-  bottom: 23%;
+  bottom: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--azeno-red);
+  background: var(--brand-accent);
   transform: skew(-28deg);
 }
 main.home-content {
   position: absolute;
-  left: 5.45%;
+  inset-inline-start: max(var(--page-gutter), calc((100% - var(--content-limit)) / 2));
   top: 17.5%;
-  max-width: none;
+  max-width: calc(100% - var(--page-gutter) * 2);
   margin: 0;
 }
 .heading-mark {
   display: flex;
   align-items: center;
   gap: 2vw;
-  color: var(--primary-white);
-  font-size: clamp(14px, 1.27vw, 24px);
-  font-weight: 700;
-  letter-spacing: 0.46em;
+  color: var(--text-primary);
+  font: var(--type-label);
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   margin-bottom: 4.45vh;
 }
@@ -136,27 +130,24 @@ main.home-content {
   content: '';
   width: 15vw;
   height: 3px;
-  background: linear-gradient(90deg, var(--azeno-red), transparent);
+  background: var(--brand-rule);
 }
 .home h1 {
-  font:
-    italic 710 clamp(58px, 5.85vw, 126px)/0.97 'Montserrat Display',
-    Arial,
-    sans-serif;
-  letter-spacing: -0.032em;
+  font: var(--type-hero);
+  letter-spacing: var(--tracking-display);
   margin: 0;
-  color: var(--primary-white);
+  color: var(--text-primary);
 }
 .home h1 span {
   display: block;
 }
 .home h1 em {
-  color: var(--azeno-red);
+  color: var(--brand-accent);
 }
 .home-tagline {
-  color: var(--muted-text);
-  font-size: clamp(18px, 1.72vw, 32px);
-  font-weight: 650;
+  color: var(--text-secondary);
+  font: var(--type-support);
+  text-shadow: var(--text-shadow);
   margin: 2.5vh 0 3.8vh;
 }
 .home-actions {
@@ -166,11 +157,10 @@ main.home-content {
 }
 .home-actions button:disabled {
   opacity: 1;
-  cursor: default;
-  color: var(--primary-white);
-  font:
-    600 clamp(14px, 1.14vw, 22px) Arial,
-    sans-serif;
+  cursor: not-allowed;
+  color: var(--text-primary);
+  font: var(--type-action);
+  min-height: var(--control-height);
   display: inline-flex;
   gap: 12px;
   align-items: center;
@@ -180,30 +170,48 @@ main.home-content {
 }
 .home-actions button:first-child {
   padding: 0.8em 1.5em;
-  background: var(--crimson);
-  border-radius: 8px;
+  background: var(--disabled-accent-surface);
+  border-radius: var(--control-radius);
 }
-.home-actions button span {
-  font-size: 1.25em;
+.route-lock {
+  position: relative;
+  width: 0.62em;
+  height: 0.48em;
+  border: 1px solid currentColor;
+  border-radius: 0.1em;
+  margin: 0.2em 0 0;
+}
+.route-lock::before {
+  content: '';
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 100%;
+  height: 0.34em;
+  border: 1px solid currentColor;
+  border-bottom: 0;
+  border-radius: 1em 1em 0 0;
+}
+.home-header nav [aria-disabled] {
+  gap: 0.4em;
+}
+.home-header a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.26em;
+}
+.home-header a:active {
+  color: var(--focus-ring);
 }
 .home-foot {
   bottom: 3.3%;
   justify-content: flex-end;
 }
-.home:after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(135deg, transparent 49.6%, var(--crimson) 50%, transparent 50.5%)
-    right 78%/6vw 6vw no-repeat;
-}
 .home-foot button {
-  color: var(--primary-white);
-  background: color-mix(in srgb, var(--deep-space) 86%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cloud-silver) 45%, transparent);
-  border-radius: 2px;
-  min-height: 38px;
+  color: var(--text-primary);
+  background: var(--control-surface);
+  border: 1px solid var(--control-border);
+  border-radius: calc(var(--control-radius) / 2);
+  min-height: var(--control-height);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -213,10 +221,16 @@ main.home-content {
     sans-serif;
 }
 .home-foot button:hover {
-  border-color: var(--primary-white);
+  background: var(--control-hover);
+  border-color: var(--text-primary);
+}
+.home-foot button:active {
+  background: var(--control-active);
 }
 .home :focus-visible {
-  outline-color: var(--atmospheric-blue);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px var(--canvas-background);
 }
 .pause {
   width: 7px;
@@ -232,7 +246,7 @@ main.home-content {
     background-image: url('/home/orbit-portrait.webp');
   }
   main.home-content {
-    top: 39%;
+    top: 31%;
   }
   .home h1 {
     font-size: clamp(46px, 10.3vw, 98px);
@@ -243,29 +257,31 @@ main.home-content {
     min-height: 550px;
   }
   .home-header {
-    height: 102px;
+    height: auto;
+    padding-top: var(--space-medium);
     align-content: center;
     align-items: flex-start;
     justify-content: center;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-small);
   }
   .home-header nav {
-    gap: 26px;
+    gap: clamp(0.75rem, 4vw, 1.625rem);
     align-self: flex-start;
   }
   .home-header nav > * {
     font-size: 14px;
-    min-height: 28px;
+    min-height: var(--control-height);
   }
   .home-header a:after {
-    bottom: -4px;
+    bottom: 0;
   }
   .heading-mark {
     margin-bottom: 15px;
   }
   .home-actions {
-    gap: 18px;
+    flex-wrap: wrap;
+    gap: var(--space-small) var(--space-medium);
   }
   .home-tagline {
     margin: 16px 0 21px;
@@ -278,8 +294,7 @@ main.home-content {
   inset: -0.65%;
   pointer-events: none;
   background: url('/home/foreground.webp') center bottom / 100% 100% no-repeat;
-  /* Shift the plate's golden rim light toward the scene's red sunrise. */
-  filter: hue-rotate(-22deg) saturate(1.45) contrast(1.06);
+  filter: saturate(1.22) hue-rotate(-12deg);
   transform: translate3d(var(--drift-x, 0px), var(--drift-y, 0px), 0);
   transition: transform 0.45s ease-out;
 }
@@ -288,32 +303,9 @@ main.home-content {
     background-size: auto 60%;
     background-position: 88% bottom;
   }
-  main.home-content {
-    top: 31%;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .home-foreground {
     transition: none;
   }
-}
-
-.orbital-view::after {
-  content: '';
-  position: absolute;
-  inset: -0.35%;
-  /* Crimson dawn grade over the orbital render, centred on the rising Sun. */
-  background:
-    radial-gradient(
-      ellipse 46% 40% at 55% 44%,
-      color-mix(in srgb, var(--azeno-red) 46%, transparent) 0%,
-      color-mix(in srgb, var(--crimson) 22%, transparent) 42%,
-      transparent 72%
-    ),
-    linear-gradient(
-      200deg,
-      transparent 30%,
-      color-mix(in srgb, var(--deep-red) 34%, transparent) 100%
-    );
-  mix-blend-mode: screen;
 }

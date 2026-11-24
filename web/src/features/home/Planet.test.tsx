@@ -1,6 +1,14 @@
 import { render } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
-import { Texture, SRGBColorSpace, NoColorSpace, RedFormat, RepeatWrapping } from 'three';
+import {
+  Texture,
+  SRGBColorSpace,
+  NoColorSpace,
+  RedFormat,
+  RepeatWrapping,
+  ClampToEdgeWrapping,
+  LinearFilter,
+} from 'three';
 
 import { Planet } from './Planet';
 
@@ -15,13 +23,17 @@ const textures = {
   lights: new Texture(),
   density: new Texture(),
   reliefOcean: new Texture(),
+  atmosphere: new Texture(),
+  regionAlbedo: new Texture(),
+  regionLights: new Texture(),
 };
 const urls = vi.fn<(value: string[]) => void>();
 vi.mock('@react-three/drei', () => ({
   useTexture: (assets: string[], setup: (value: Texture[]) => void) => {
     urls(assets);
-    setup(Object.values(textures));
-    return Object.values(textures);
+    const maps = Object.values(textures).slice(0, assets.length);
+    setup(maps);
+    return maps;
   },
 }));
 vi.mock('@react-three/fiber', () => ({
@@ -47,7 +59,17 @@ it('places sunrise on the curved limb and keeps city lights attached to the rota
   Object.defineProperty(cloud, 'rotation', { value: cloudRotation });
   expect(urls).toHaveBeenLastCalledWith(expect.arrayContaining(['/home/planet/albedo-8k.webp']));
   expect(textures.albedo.colorSpace).toBe(SRGBColorSpace);
-  expect(textures.density.anisotropy).toBe(8);
+  expect(textures.density.anisotropy).toBe(16);
+  expect(textures.regionLights.format).toBe(RedFormat);
+  expect(textures.regionAlbedo.colorSpace).toBe(SRGBColorSpace);
+  expect(textures.regionAlbedo.wrapS).toBe(ClampToEdgeWrapping);
+  expect(textures.atmosphere.flipY).toBe(false);
+  expect(textures.atmosphere.anisotropy).toBe(1);
+  expect(textures.atmosphere.minFilter).toBe(LinearFilter);
+  expect(textures.atmosphere.generateMipmaps).toBe(false);
+  expect(urls).toHaveBeenLastCalledWith(
+    expect.arrayContaining(['/home/planet/europe-albedo.webp', '/home/planet/europe-lights.webp']),
+  );
   expect(textures.density.format).toBe(RedFormat);
   expect(textures.reliefOcean.colorSpace).toBe(NoColorSpace);
   expect(textures.reliefOcean.wrapS).toBe(RepeatWrapping);
@@ -67,10 +89,28 @@ it('places sunrise on the curved limb and keeps city lights attached to the rota
   expect(phase.value).toBeCloseTo((groundRotation.y - cloudRotation.y) / (2 * Math.PI), 8);
   scene.viewport.width = 390 / 80;
   scene.size.width = 390;
+  const originalShader = terrain?.querySelector('shaderMaterial');
   rerender(<Planet moving={false} />);
+  const mobileShader = terrain?.querySelector('shaderMaterial');
+  expect(mobileShader).not.toBe(originalShader);
+  const mobilePhase = { value: NaN };
+  Object.defineProperty(mobileShader, 'uniforms', { value: { cloudOffset: mobilePhase } });
   scene.frame(null, 1);
+  expect(mobilePhase.value).toBeCloseTo(phase.value, 8);
   expect(groundRotation.y).toBeCloseTo(0.006 * 0.05, 7);
+  expect(textures.density.anisotropy).toBe(8);
+  expect(urls.mock.lastCall?.[0]).not.toContain('/home/planet/europe-lights.webp');
   expect(urls).toHaveBeenLastCalledWith(
     expect.arrayContaining(['/home/planet/albedo-4k.webp', '/home/planet/clouds-2k.webp']),
   );
+  scene.size.width = 1672;
+  scene.viewport.width = 1672 / 80;
+  rerender(<Planet moving={false} />);
+  const restoredShader = terrain?.querySelector('shaderMaterial');
+  expect(restoredShader).not.toBe(mobileShader);
+  const restoredPhase = { value: NaN };
+  Object.defineProperty(restoredShader, 'uniforms', { value: { cloudOffset: restoredPhase } });
+  scene.frame(null, 1);
+  expect(restoredPhase.value).toBeCloseTo(phase.value, 8);
+  expect(urls.mock.lastCall?.[0]).toContain('/home/planet/europe-albedo.webp');
 });

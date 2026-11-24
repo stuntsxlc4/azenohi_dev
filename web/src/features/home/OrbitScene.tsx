@@ -1,18 +1,17 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { ACESFilmicToneMapping, MathUtils, SRGBColorSpace } from 'three';
 import type { Group } from 'three';
 import { Planet } from './Planet';
 import { Station } from './Station';
+import { getEarthQuality } from './earthQuality';
 
 interface MotionProps {
   moving: boolean;
   pointer: RefObject<{ x: number; y: number }>;
 }
-
-const maxDpr = 1.75;
 
 // A static reflection capture gives the hull warm sunward and cool Earth-facing highlights.
 function ReflectedLight() {
@@ -23,16 +22,16 @@ function ReflectedLight() {
         position={[-5, 1, 1]}
         rotation={[0, Math.PI / 2, 0]}
         scale={[2, 5, 1]}
-        intensity={4}
-        color="#ffd9ae"
+        intensity={4.4}
+        color="#ffa17b"
       />
       <Lightformer
         form="rect"
         position={[0, -4, 0]}
         rotation={[Math.PI / 2, 0, 0]}
         scale={[9, 5, 1]}
-        intensity={1.5}
-        color="#92afd1"
+        intensity={1.65}
+        color="#82aacd"
       />
       <Lightformer
         form="rect"
@@ -46,12 +45,35 @@ function ReflectedLight() {
   );
 }
 
-function Orbit({ moving, pointer, onReady }: MotionProps & { onReady: () => void }) {
+function Orbit({
+  moving,
+  pointer,
+  onReady,
+  onDprChange,
+}: MotionProps & {
+  onReady: () => void;
+  onDprChange: (dpr: number) => void;
+}) {
   useEffect(onReady, [onReady]);
   const ring = useRef<Group>(null);
   const station = useRef<Group>(null);
   const flightTime = useRef(0);
-  const samples = useRef({ seconds: 0, frames: 0 });
+  const samples = useRef({ warmup: 0, seconds: 0, frames: 0 });
+  const quality = useThree((s) => getEarthQuality(s.gl.capabilities, s.size.width));
+  const nativeDpr = window.devicePixelRatio || 1;
+  const targetDpr = quality.tier === 'ultra' ? nativeDpr : Math.min(nativeDpr, 1.5);
+  useLayoutEffect(() => {
+    onDprChange(targetDpr);
+    samples.current = { warmup: 0, seconds: 0, frames: 0 };
+  }, [onDprChange, targetDpr]);
+  useEffect(() => {
+    const reset = () => {
+      samples.current = { warmup: 0, seconds: 0, frames: 0 };
+    };
+    if (moving) reset();
+    document.addEventListener('visibilitychange', reset);
+    return () => document.removeEventListener('visibilitychange', reset);
+  }, [moving]);
   const { width, height } = useThree((state) => state.viewport);
   const portrait = width < height;
   useFrame((state, delta) => {
@@ -72,29 +94,34 @@ function Orbit({ moving, pointer, onReady }: MotionProps & { onReady: () => void
       5,
       delta,
     );
-    // Sample sustained frame time, skipping the first long frame after resuming a hidden tab.
-    if (delta > 0 && delta < 0.5) {
-      samples.current.frames++;
-      samples.current.seconds += delta;
-      if (samples.current.seconds >= 2.5) {
-        const fps = samples.current.frames / samples.current.seconds;
-        const dpr = state.viewport.dpr;
-        const cap = Math.min(window.devicePixelRatio, maxDpr);
-        // Keep at least one sample per CSS pixel unless sustained throughput is below 24 fps.
-        const floor = fps < 24 ? 0.8 : 1;
-        if (fps < 36 && dpr > floor) state.setDpr(Math.max(floor, dpr - 0.25));
-        else if (fps > 57 && dpr < cap) state.setDpr(Math.min(cap, dpr + 0.25));
-        samples.current = { seconds: 0, frames: 0 };
-      }
+    // Start measuring only after the loaded, visible scene has animated for eight seconds.
+    // A second eight-second window keeps a compile or tab switch from downgrading Retina.
+    // Ultra keeps its native buffer even when the OS limits refresh on battery.
+    if (quality.tier === 'ultra') return;
+    const sample = samples.current;
+    if (document.hidden || delta <= 0 || delta > 1) return;
+    if (sample.warmup < 8) {
+      sample.warmup += delta;
+      return;
     }
+    sample.seconds += delta;
+    sample.frames++;
+    if (sample.seconds < 8) return;
+    const fps = sample.frames / sample.seconds;
+    const dpr = state.viewport.dpr;
+    const floor = Math.min(targetDpr, 1);
+    if (fps < 42 && dpr > floor) onDprChange(Math.max(floor, dpr - 0.25));
+    else if (fps > 58 && dpr < targetDpr) onDprChange(Math.min(targetDpr, dpr + 0.25));
+    sample.seconds = 0;
+    sample.frames = 0;
   });
   return (
     <>
       <Planet moving={moving} />
       <ReflectedLight />
-      <hemisphereLight args={['#9eb9d3', '#637b9e', 0.4]} />
-      <directionalLight position={[-5, 1, 1.2]} intensity={2.65} color="#ffce93" />
-      <directionalLight position={[1, 2, -4]} intensity={1.5} color="#a9c1db" />
+      <hemisphereLight args={['#a4bbd0', '#526b84', 0.38]} />
+      <directionalLight position={[-5, 1, 1.2]} intensity={2.55} color="#ffb88e" />
+      <directionalLight position={[1, 2, -4]} intensity={1.55} color="#a0bdd7" />
       <group
         position={[width * (portrait ? 0.19 : 0.31), height * (portrait ? 0.235 : 0.258), 1]}
         scale={Math.min(width * (portrait ? 0.18 : 0.154), height * 0.29)}
@@ -113,11 +140,13 @@ export default function OrbitScene({
   onReady,
   onFailure,
 }: MotionProps & { onReady: () => void; onFailure: () => void }) {
+  // Begin within the mobile budget until the actual renderer capabilities are known.
+  const [dpr, setDpr] = useState(() => Math.min(window.devicePixelRatio || 1, 1.5));
   return (
     <Canvas
       orthographic
       camera={{ position: [0, 0, 10], zoom: 80, near: 0.1, far: 500 }}
-      dpr={[1, maxDpr]}
+      dpr={dpr}
       frameloop={moving ? 'always' : 'demand'}
       gl={{
         alpha: true,
@@ -131,7 +160,7 @@ export default function OrbitScene({
         gl.domElement.addEventListener('webglcontextlost', onFailure, { once: true });
       }}
     >
-      <Orbit moving={moving} pointer={pointer} onReady={onReady} />
+      <Orbit moving={moving} pointer={pointer} onReady={onReady} onDprChange={setDpr} />
     </Canvas>
   );
 }

@@ -7,7 +7,10 @@ import { App } from '../../app/App';
 
 const lifecycle = vi.hoisted(() => ({
   frame: (_state: unknown, _delta: number) => {},
-  viewport: { width: 16, height: 9, dpr: 1 },
+  viewport: { width: 16, height: 9, dpr: 2 },
+  size: { width: 1440 },
+  gl: { capabilities: { maxTextureSize: 16384, getMaxAnisotropy: () => 16 } },
+  canvasDpr: vi.fn<(value: number) => void>(),
 }));
 const canvas = document.createElement('canvas');
 const nodes = { Rotor: new Group(), Spindle: new Group() };
@@ -26,10 +29,14 @@ vi.mock('@react-three/fiber', () => ({
   Canvas: ({
     onCreated,
     children,
+    dpr,
   }: {
     onCreated: (state: { gl: { domElement: HTMLCanvasElement } }) => void;
     children: ReactNode;
+    dpr: number;
   }) => {
+    lifecycle.canvasDpr(dpr);
+    lifecycle.viewport.dpr = dpr;
     useEffect(() => {
       onCreated({ gl: { domElement: canvas } });
     }, [onCreated]);
@@ -43,9 +50,14 @@ afterEach(() => {
 it('keeps the station still for reduced motion, budgets DPR and switches to the poster on context loss', async () => {
   vi.stubGlobal('WebGL2RenderingContext', Object);
   const media = Object.assign(new EventTarget(), { matches: true });
-  vi.stubGlobal('matchMedia', () => media);
+  vi.stubGlobal('devicePixelRatio', 2);
+  vi.stubGlobal('matchMedia', (query: string) =>
+    query.includes('reduced-motion') ? media : { matches: false },
+  );
+  lifecycle.size.width = 1440;
   const { container } = render(<App />);
   const play = await screen.findByRole('button', { name: 'Play animation' });
+  expect(lifecycle.canvasDpr).toHaveBeenLastCalledWith(2);
   const ring = container.querySelector('[name="habitat-ring"]');
   const carrier = container.querySelector('[name="station-carrier"]');
   const rotor = { z: 0 },
@@ -58,7 +70,6 @@ it('keeps the station still for reduced motion, budgets DPR and switches to the 
   const state = {
     camera: { position: { x: 0, y: 0 } },
     viewport: lifecycle.viewport,
-    setDpr: vi.fn<(value: number) => void>(),
   };
   lifecycle.frame(state, 1);
   expect(rotor.z).toBe(0);
@@ -67,16 +78,41 @@ it('keeps the station still for reduced motion, budgets DPR and switches to the 
   lifecycle.frame(state, 1);
   expect(rotor.z).toBeCloseTo(-0.056);
   expect(position.y).toBeGreaterThan(0);
-  for (let i = 0; i < 64; i++) lifecycle.frame(state, 0.041);
-  expect(state.setDpr).not.toHaveBeenCalled();
-  for (let i = 0; i < 51; i++) lifecycle.frame(state, 0.05);
-  expect(state.setDpr).toHaveBeenCalledWith(0.8);
-  state.viewport.dpr = 0.8;
-  for (let i = 0; i < 160; i++) lifecycle.frame(state, 0.016);
-  expect(state.setDpr).toHaveBeenCalledWith(1);
+  for (let i = 0; i < 400; i++) lifecycle.frame(state, 0.05);
+  expect(lifecycle.canvasDpr).toHaveBeenLastCalledWith(2);
+  lifecycle.size.width = 700;
+  fireEvent.click(screen.getByRole('button', { name: 'Pause animation' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Play animation' }));
+  expect(lifecycle.canvasDpr).toHaveBeenLastCalledWith(1.5);
+  lifecycle.canvasDpr.mockClear();
+  // A slow startup is excluded. Only sustained low throughput after warmup reduces DPR.
+  for (let i = 0; i < 210; i++) lifecycle.frame(state, 0.05);
+  expect(lifecycle.canvasDpr).not.toHaveBeenCalled();
+  act(() => {
+    for (let i = 0; i < 140; i++) lifecycle.frame(state, 0.05);
+  });
+  expect(lifecycle.canvasDpr).toHaveBeenLastCalledWith(1.25);
+
+  act(() => {
+    for (let i = 0; i < 1100; i++) lifecycle.frame(state, 0.015);
+  });
+  expect(lifecycle.canvasDpr).toHaveBeenLastCalledWith(1.5);
   await act(() => media.dispatchEvent(new Event('change')));
   expect(screen.getByRole('button', { name: 'Play animation' })).toBeInTheDocument();
   await act(() => canvas.dispatchEvent(new Event('webglcontextlost')));
   expect(screen.queryByTestId('scene')).toBeNull();
   expect(screen.getByRole('heading', { name: 'Hybrid Intelligence' })).toBeVisible();
+});
+
+it('keeps the declared mobile buffer capped from startup through readiness and motion changes', async () => {
+  lifecycle.size.width = 390;
+  vi.stubGlobal('WebGL2RenderingContext', Object);
+  vi.stubGlobal('devicePixelRatio', 3);
+  const media = Object.assign(new EventTarget(), { matches: true });
+  vi.stubGlobal('matchMedia', () => media);
+  render(<App />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Play animation' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Pause animation' }));
+  expect(lifecycle.canvasDpr.mock.calls.length).toBeGreaterThan(1);
+  expect(new Set(lifecycle.canvasDpr.mock.calls.flat())).toEqual(new Set([1.5]));
 });

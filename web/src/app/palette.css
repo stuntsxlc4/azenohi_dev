@@ -29,3 +29,44 @@
   --cloud-silver: #dce5ef;
   --primary-white: #f5f5f7;
 }
+
+:root {
+  --canvas-background: var(--space-black);
+  --sky-gradient: radial-gradient(
+    ellipse at 67% 56%,
+    var(--midnight-blue),
+    var(--deep-space) 44%,
+    var(--space-black) 86%
+  );
+  --control-surface: color-mix(in srgb, var(--deep-space) 88%, transparent);
+  --control-hover: var(--dark-navy);
+  --control-active: var(--space-slate);
+  --control-border: var(--steel);
+  --text-primary: var(--primary-white);
+  --text-secondary: var(--muted-text);
+  --brand-accent: var(--azeno-red);
+  --brand-rule: linear-gradient(90deg, var(--brand-accent), transparent);
+  --disabled-accent-surface: color-mix(in srgb, var(--crimson) 88%, var(--gunmetal));
+  --focus-ring: var(--horizon-glow);
+  --text-shadow: 0 1px 8px color-mix(in srgb, var(--space-black) 65%, transparent);
+
+  --font-ui: Arial, Helvetica, sans-serif;
+  --font-display: 'Montserrat Display', var(--font-ui);
+  --type-hero: italic 710 clamp(3.625rem, 5.85vw, 7.875rem)/0.97 var(--font-display);
+  --type-section: 700 clamp(1.5rem, 3vw, 2.75rem)/1.12 var(--font-ui);
+  --type-label: 700 clamp(0.875rem, 1.27vw, 1.5rem)/1.2 var(--font-ui);
+  --type-body: 400 1rem/1.5 var(--font-ui);
+  --type-support: 650 clamp(1.125rem, 1.72vw, 2rem)/1.35 var(--font-ui);
+  --type-nav: 550 clamp(1rem, 1.45vw, 1.5625rem)/1.25 var(--font-ui);
+  --type-action: 600 clamp(0.875rem, 1.14vw, 1.375rem)/1.25 var(--font-ui);
+  --tracking-display: -0.032em;
+  --tracking-label: 0.46em;
+
+  --page-gutter: clamp(1rem, 5.4vw, 8rem);
+  --content-limit: 112rem;
+  --header-height: clamp(4.625rem, 10.5svh, 6.875rem);
+  --space-small: 0.5rem;
+  --space-medium: 1rem;
+  --control-height: 2.75rem;
+  --control-radius: 0.5rem;
+}

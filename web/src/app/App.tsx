@@ -21,6 +21,10 @@ class SceneBoundary extends Component<
   }
 }
 
+function RouteLock() {
+  return <i className="route-lock" aria-hidden="true" />;
+}
+
 export function App() {
   const [moving, setMoving] = useState(() => !window.matchMedia?.(motionQuery).matches);
   const pointer = useRef({ x: 0, y: 0 });
@@ -80,8 +84,9 @@ export function App() {
             Home
           </a>
           {['Team', 'Projects', 'Journey'].map((label) => (
-            <span key={label} aria-disabled="true">
+            <span key={label} aria-disabled="true" title={`${label} is not available yet`}>
               {label}
+              <RouteLock />
             </span>
           ))}
         </nav>
@@ -97,10 +102,10 @@ export function App() {
         <p className="home-tagline">People × AI</p>
         <div className="home-actions">
           <button type="button" disabled>
-            Explore projects <span aria-hidden="true">→</span>
+            Explore projects <RouteLock />
           </button>
           <button type="button" disabled>
-            Meet the team <span aria-hidden="true">↗</span>
+            Meet the team <RouteLock />
           </button>
         </div>
       </main>

@@ -19,3 +19,27 @@ The relief-ocean maps carry tangent-space normal XY in the red and green channel
 (amplified around the neutral value before compression), and the ocean mask
 from the source specular map in blue. All three channels use linear data. The 8K cloud layer
 retains the original cloud map's resolution.
+
+European detail tiles (4096 x 3072 each), longitude -16 to 24 degrees,
+latitude 33 to 63 degrees, EPSG:4326. Supplied via NASA GIBS, 500 m
+tile matrix set, layers BlueMarble_NextGeneration and VIIRS_CityLights_2012.
+https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi
+europe-albedo.webp is a regional MODIS Blue Marble Next Generation composite
+by Reto Stockli, NASA Earth Observatory. Broad-scale colors were matched to
+the global albedo in linear light. Source and credit:
+https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/
+europe-lights.webp isolates the bright and warm emission from the Earth at
+Night 2012 composite. NASA Earth Observatory image by Robert Simmon, using
+Suomi NPP VIIRS data provided courtesy of Chris Elvidge (NOAA National
+Geophysical Data Center). https://svs.gsfc.nasa.gov/30028/
+NASA media usage guidelines apply to both NASA images:
+https://www.nasa.gov/nasa-brand-center/images-and-media/
+
+atmosphere.png is original numerical data generated for this scene by
+web/scripts/build-earth-atmosphere.py. Its rows encode wavelength-dependent
+transmittance and in-scattered radiance for the fixed solar elevation.
+Background on the scattering model:
+https://ebruneton.github.io/precomputed_atmospheric_scattering/
+NASA astronaut photograph ISS070-E-1178 provided the visual reference for
+the cool stratosphere above the warm, low-altitude sunrise:
+https://science.nasa.gov/earth/earth-observatory/sunrise-from-the-station-152259/

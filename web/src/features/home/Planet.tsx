@@ -68,8 +68,8 @@ void main() {
   float rayToCloud = sqrt(max(mu,0.)*max(mu,0.)+0.00130)-max(mu,0.);
   float cloudDensity = texture2D(densityMap,mapUV+vec2(cloudOffset,0.)+alongSun*rayToCloud).r;
   float transmittance = exp(-2.0 * cloudDensity * cloudDensity);
-  vec3 direct = illumination * transmittance * vec3(1.95,1.65,1.50);
-  vec3 sky = mix(vec3(0.072,0.13,0.195),vec3(0.20,0.29,0.43),daylight);
+  vec3 direct = illumination * transmittance * vec3(2.15,1.28,1.05);
+  vec3 sky = mix(vec3(0.105,0.10,0.20),vec3(0.31,0.24,0.42),daylight);
   vec3 ground = albedo * (sky + direct);
 
   // Dielectric Fresnel + a rough-ocean microfacet lobe restricted to measured water.
@@ -129,10 +129,10 @@ void main() {
   float twilight = smoothstep(-0.28,0.15,incidence);
   // The deck is illuminated by a hemisphere of skylight even on its shaded side.
   // Ice and liquid water scatter near-neutrally; the skylight carries the blue tint.
-  vec3 sky = mix(vec3(.163,.213,.27),vec3(.51,.55,.59),twilight);
+  vec3 sky = mix(vec3(.21,.18,.29),vec3(.60,.48,.58),twilight);
   float softDensity = textureLod(densityMap,mapUV,2.0).r;
   float ridge = clamp(3.1*(density-upstream) + 1.8*(density-softDensity),-.38,.90);
-  vec3 sunset = mix(vec3(1.42,.80,.44),vec3(1.75,1.55,1.36),smoothstep(.015,.24,incidence));
+  vec3 sunset = mix(vec3(1.65,.52,.34),vec3(1.85,1.30,1.12),smoothstep(.015,.24,incidence));
   vec3 light = sky * (.64+.44*density+.32*ridge) + sunset*localLight*shadow;
   // Forward illumination catches the crests of optically thick clouds near the limb.
   float silverLining = smoothstep(-.069,.12,incidence) * max(0.,ridge) * density;

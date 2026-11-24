@@ -1,6 +1,7 @@
 # Working in this repository
 
 Read the [constitution](.specify/memory/constitution.md) before planning or making changes.
+Create or switch to a dedicated feature branch before editing project files. Never develop or commit directly on `main`.
 Write agent guidance and all Spec Kit artifacts in English.
 
 - Setup and checks: [README.md](README.md), [Makefile](Makefile)

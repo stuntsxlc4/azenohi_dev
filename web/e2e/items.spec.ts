@@ -28,12 +28,12 @@ test('renders accessible start navigation at the configured viewport', async ({
   page,
 }) => {
   await page.goto('/?source=navigation-test');
-  await expect(page).toHaveTitle('Aplikacja');
-  await expect(page.getByRole('main')).toHaveText('Aplikacja działa.');
-  await expect(page.getByRole('button')).toHaveCount(0);
+  await expect(page).toHaveTitle('AzenoHI.dev — Hybrid Intelligence');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hybrid Intelligence');
+  await expect(page.locator('nav [aria-disabled=true]')).toHaveCount(3);
 
-  const navigation = page.getByRole('navigation', { name: 'Nawigacja główna' });
-  const startLink = navigation.getByRole('link', { name: 'Start' });
+  const navigation = page.getByRole('navigation', { name: 'Main navigation' });
+  const startLink = navigation.getByRole('link', { name: 'Home' });
   await expect(navigation.getByRole('link')).toHaveCount(1);
   await expect(startLink).toHaveAttribute('href', '/');
   await expect(startLink).toHaveAttribute('aria-current', 'page');
@@ -98,7 +98,7 @@ test('connects the frontend proxy to the real API and persists an example resour
   });
   await page.goto('/');
   await page.reload();
-  await expect(page.getByRole('main')).toHaveText('Aplikacja działa.');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hybrid Intelligence');
   const persisted = await request.get(resource);
   expect(itemSchema.parse(await persisted.json()).title).toBe(updatedTitle);
   expect((await request.delete(resource)).status()).toBe(204);
@@ -115,7 +115,7 @@ test('loads the page without depending on API availability', async ({ page }) =>
   });
   await page.goto('/');
   await page.reload();
-  await expect(page.getByRole('main')).toHaveText('Aplikacja działa.');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hybrid Intelligence');
   expect(apiRequests).toBe(0);
   expect(errors).toEqual([]);
 });

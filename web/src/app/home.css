@@ -1,0 +1,320 @@
+@import './palette.css';
+
+@font-face {
+  font-family: Montserrat Display;
+  src: url('/home/display.ttf') format('truetype');
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+}
+body:has(.home) {
+  margin: 0;
+  background: var(--space-black);
+  color: var(--primary-white);
+}
+.home {
+  position: relative;
+  isolation: isolate;
+  min-height: 620px;
+  height: 100svh;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 67% 56%,
+    var(--midnight-blue) 0%,
+    var(--deep-space) 44%,
+    var(--space-black) 86%
+  );
+  font-family: Arial, Helvetica, sans-serif;
+}
+.home:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/home/stars.png') repeat;
+  background-size: 640px 480px;
+  opacity: 0.23;
+  z-index: -3;
+}
+.orbital-view {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+  background: url('/home/orbit-desktop.webp') center/100% 100% no-repeat;
+}
+.orbital-view[data-rendered='true'] {
+  background: none;
+}
+.home-header,
+.home-foot {
+  position: absolute;
+  left: 5.2%;
+  right: 5.2%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.home-header {
+  top: 0;
+  height: clamp(74px, 10.5vh, 110px);
+}
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  font-size: clamp(23px, 2.38vw, 42px);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.wordmark b {
+  color: var(--azeno-red);
+}
+.wordmark small {
+  font-size: 1em;
+  letter-spacing: -0.045em;
+}
+.wordmark i {
+  align-self: center;
+  display: inline-block;
+  width: 1.45em;
+  height: 1em;
+  margin-right: 0.44em;
+  background: var(--azeno-red);
+  clip-path: polygon(0 100%, 44% 0, 76% 0, 32% 100%, 0 100%, 44% 100%, 72% 34%, 100% 34%, 72% 100%);
+}
+.home-header nav {
+  display: flex;
+  gap: clamp(20px, 4.4vw, 76px);
+  align-self: stretch;
+  align-items: stretch;
+}
+.home-header nav > * {
+  display: flex;
+  align-items: center;
+  font-weight: 550;
+  font-size: clamp(16px, 1.45vw, 25px);
+  letter-spacing: 0;
+}
+.home-header nav span {
+  color: var(--cloud-silver);
+}
+.home-header a {
+  color: var(--primary-white);
+  text-decoration: none;
+  position: relative;
+}
+.home-header a:after {
+  content: '';
+  position: absolute;
+  bottom: 23%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--azeno-red);
+  transform: skew(-28deg);
+}
+main.home-content {
+  position: absolute;
+  left: 5.45%;
+  top: 17.5%;
+  max-width: none;
+  margin: 0;
+}
+.heading-mark {
+  display: flex;
+  align-items: center;
+  gap: 2vw;
+  color: var(--primary-white);
+  font-size: clamp(14px, 1.27vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.46em;
+  text-transform: uppercase;
+  margin-bottom: 4.45vh;
+}
+.heading-mark:after {
+  content: '';
+  width: 15vw;
+  height: 3px;
+  background: linear-gradient(90deg, var(--azeno-red), transparent);
+}
+.home h1 {
+  font:
+    italic 710 clamp(58px, 5.85vw, 126px)/0.97 'Montserrat Display',
+    Arial,
+    sans-serif;
+  letter-spacing: -0.032em;
+  margin: 0;
+  color: var(--primary-white);
+}
+.home h1 span {
+  display: block;
+}
+.home h1 em {
+  color: var(--azeno-red);
+}
+.home-tagline {
+  color: var(--muted-text);
+  font-size: clamp(18px, 1.72vw, 32px);
+  font-weight: 650;
+  margin: 2.5vh 0 3.8vh;
+}
+.home-actions {
+  display: flex;
+  gap: 2.1vw;
+  align-items: center;
+}
+.home-actions button:disabled {
+  opacity: 1;
+  cursor: default;
+  color: var(--primary-white);
+  font:
+    600 clamp(14px, 1.14vw, 22px) Arial,
+    sans-serif;
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  padding: 10px 0;
+}
+.home-actions button:first-child {
+  padding: 0.8em 1.5em;
+  background: var(--crimson);
+  border-radius: 8px;
+}
+.home-actions button span {
+  font-size: 1.25em;
+}
+.home-foot {
+  bottom: 3.3%;
+  justify-content: flex-end;
+}
+.home:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, transparent 49.6%, var(--azeno-red) 50%, transparent 50.5%) left
+      bottom/9vw 9vw no-repeat,
+    linear-gradient(135deg, transparent 49.6%, var(--crimson) 50%, transparent 50.5%) right 78%/6vw
+      6vw no-repeat;
+}
+.home-foot button {
+  color: var(--primary-white);
+  background: color-mix(in srgb, var(--deep-space) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cloud-silver) 45%, transparent);
+  border-radius: 2px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  font:
+    600 12px Arial,
+    sans-serif;
+}
+.home-foot button:hover {
+  border-color: var(--primary-white);
+}
+.home :focus-visible {
+  outline-color: var(--atmospheric-blue);
+}
+.pause {
+  width: 7px;
+  height: 10px;
+  border-inline: 2px solid;
+}
+.play {
+  border-left: 8px solid;
+  border-block: 5px solid transparent;
+}
+@media (max-aspect-ratio: 1/1) {
+  .orbital-view {
+    background-image: url('/home/orbit-portrait.webp');
+  }
+  main.home-content {
+    top: 39%;
+  }
+  .home h1 {
+    font-size: clamp(46px, 10.3vw, 98px);
+  }
+}
+@media (max-width: 620px) {
+  .home {
+    min-height: 550px;
+  }
+  .home-header {
+    height: 102px;
+    align-content: center;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .home-header nav {
+    gap: 26px;
+    align-self: flex-start;
+  }
+  .home-header nav > * {
+    font-size: 14px;
+    min-height: 28px;
+  }
+  .home-header a:after {
+    bottom: -4px;
+  }
+  .heading-mark {
+    margin-bottom: 15px;
+  }
+  .home-actions {
+    gap: 18px;
+  }
+  .home-tagline {
+    margin: 16px 0 21px;
+  }
+}
+
+.home-foreground {
+  position: absolute;
+  z-index: -1;
+  inset: -0.65%;
+  pointer-events: none;
+  background: url('/home/foreground.webp') center bottom / 100% 100% no-repeat;
+  transform: translate3d(var(--drift-x, 0px), var(--drift-y, 0px), 0);
+  transition: transform 0.45s ease-out;
+}
+@media (max-aspect-ratio: 1/1) {
+  .home-foreground {
+    background-size: auto 60%;
+    background-position: 88% bottom;
+  }
+  main.home-content {
+    top: 31%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-foreground {
+    transition: none;
+  }
+}
+
+.orbital-view::after {
+  content: '';
+  position: absolute;
+  inset: -0.35%;
+  background: url('/home/distant-ridge.webp') center bottom / 100% 100% no-repeat;
+  transform: translate3d(calc(var(--drift-x, 0px) * 0.45), calc(var(--drift-y, 0px) * 0.45), 0);
+  transition: transform 0.5s ease-out;
+}
+@media (max-aspect-ratio: 1/1) {
+  .orbital-view::after {
+    background-size: auto 50%;
+    background-position: 25% bottom;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbital-view::after {
+    transition: none;
+  }
+}

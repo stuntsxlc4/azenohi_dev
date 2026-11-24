@@ -1,8 +1,8 @@
 # Application Web
 
-Templatka React i TypeScript z Vite, TanStack Query, walidacją Zod, Vitest i Playwright. Strona główna ma nagłówek z odnośnikiem „Start” i wyświetla tekst „Aplikacja działa.”.
+Templatka React i TypeScript z Vite, TanStack Query, walidacją Zod, Vitest i Playwright. Strona główna AzenoHI.dev wyświetla ekran „Hybrid Intelligence” ze sceną orbitalną.
 
-Kod jest podzielony na `src/app`, `src/features/items` oraz `src/shared`. Przykładowy moduł `items` pozostaje w kodzie wraz z kontraktami API, formularzami, paginacją i testami. Nie jest montowany na stronie głównej. Możesz użyć `ItemsWorkspace` wewnątrz istniejącego providera zapytań, zastępując zawartość `main` w `App.tsx`. Przykład jest publiczny; auth i filtrowanie danych według właściciela są częścią docelowej aplikacji.
+Kod jest podzielony na `src/app`, `src/features/items` oraz `src/shared`. Przykładowy moduł `items` pozostaje w kodzie wraz z kontraktami API, formularzami, paginacją i testami. Nie jest montowany na stronie głównej. Moduł `ItemsWorkspace` wymaga providera TanStack Query. Przykład jest publiczny; auth i filtrowanie danych według właściciela są częścią docelowej aplikacji.
 
 ## Uruchomienie
 

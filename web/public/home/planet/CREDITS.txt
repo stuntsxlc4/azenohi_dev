@@ -1,0 +1,21 @@
+Earth textures by Solar System Scope, https://www.solarsystemscope.com/textures/
+Licensed under Creative Commons Attribution 4.0 International:
+https://creativecommons.org/licenses/by/4.0/
+
+8k_earth_daymap.jpg supplies the surface albedo.
+8k_earth_clouds.jpg supplies the independent cloud density layer.
+8k_earth_nightmap.jpg supplies artificial light emission.
+Sources: https://www.solarsystemscope.com/textures/download/8k_earth_daymap.jpg
+https://www.solarsystemscope.com/textures/download/8k_earth_clouds.jpg
+https://www.solarsystemscope.com/textures/download/8k_earth_nightmap.jpg
+
+Project adaptations include WebP compression, resolution variants and isolation
+of city lights by subtracting the blue channel from the night map's green channel.
+
+Surface roughness regions and terrain normals by Solar System Scope, CC BY 4.0.
+https://www.solarsystemscope.com/textures/download/8k_earth_specular_map.tif
+https://www.solarsystemscope.com/textures/download/8k_earth_normal_map.tif
+The relief-ocean maps carry tangent-space normal XY in the red and green channels
+(amplified around the neutral value before compression), and the ocean mask
+from the source specular map in blue. All three channels use linear data. The 8K cloud layer
+retains the original cloud map's resolution.

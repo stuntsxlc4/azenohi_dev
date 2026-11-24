@@ -1,0 +1,82 @@
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { afterEach, expect, it, vi } from 'vitest';
+import { Group } from 'three';
+import { App } from '../../app/App';
+
+const lifecycle = vi.hoisted(() => ({
+  frame: (_state: unknown, _delta: number) => {},
+  viewport: { width: 16, height: 9, dpr: 1 },
+}));
+const canvas = document.createElement('canvas');
+const nodes = { Rotor: new Group(), Spindle: new Group() };
+vi.mock('./Planet', () => ({ Planet: () => null })); // Texture selection and orbital transforms have their own tests.
+vi.mock('@react-three/drei', () => ({
+  useGLTF: () => ({ nodes }),
+  Environment: ({ children }: { children: ReactNode }) => <>{children}</>,
+  Lightformer: () => null,
+}));
+vi.mock('@react-three/fiber', () => ({
+  useFrame: (callback: typeof lifecycle.frame) => {
+    lifecycle.frame = callback;
+  },
+  useThree: (select: (state: { viewport: typeof lifecycle.viewport }) => unknown) =>
+    select(lifecycle),
+  Canvas: ({
+    onCreated,
+    children,
+  }: {
+    onCreated: (state: { gl: { domElement: HTMLCanvasElement } }) => void;
+    children: ReactNode;
+  }) => {
+    useEffect(() => {
+      onCreated({ gl: { domElement: canvas } });
+    }, [onCreated]);
+    return <div data-testid="scene">{children}</div>;
+  },
+}));
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
+it('keeps the station still for reduced motion, budgets DPR and switches to the poster on context loss', async () => {
+  vi.stubGlobal('WebGL2RenderingContext', Object);
+  const media = Object.assign(new EventTarget(), { matches: true });
+  vi.stubGlobal('matchMedia', () => media);
+  const { container } = render(<App />);
+  const play = await screen.findByRole('button', { name: 'Play animation' });
+  const ring = container.querySelector('[name="habitat-ring"]');
+  const carrier = container.querySelector('[name="station-carrier"]');
+  const rotor = { z: 0 },
+    position = { y: 0 };
+  Object.defineProperty(ring, 'rotation', { value: rotor });
+  Object.defineProperties(carrier, {
+    position: { value: position },
+    rotation: { value: { z: 0 } },
+  });
+  const state = {
+    camera: { position: { x: 0, y: 0 } },
+    viewport: lifecycle.viewport,
+    setDpr: vi.fn<(value: number) => void>(),
+  };
+  lifecycle.frame(state, 1);
+  expect(rotor.z).toBe(0);
+  lifecycle.viewport.width = 5;
+  fireEvent.click(play);
+  lifecycle.frame(state, 1);
+  expect(rotor.z).toBeCloseTo(-0.056);
+  expect(position.y).toBeGreaterThan(0);
+  for (let i = 0; i < 64; i++) lifecycle.frame(state, 0.041);
+  expect(state.setDpr).not.toHaveBeenCalled();
+  for (let i = 0; i < 51; i++) lifecycle.frame(state, 0.05);
+  expect(state.setDpr).toHaveBeenCalledWith(0.8);
+  state.viewport.dpr = 0.8;
+  for (let i = 0; i < 160; i++) lifecycle.frame(state, 0.016);
+  expect(state.setDpr).toHaveBeenCalledWith(1);
+  await act(() => media.dispatchEvent(new Event('change')));
+  expect(screen.getByRole('button', { name: 'Play animation' })).toBeInTheDocument();
+  await act(() => canvas.dispatchEvent(new Event('webglcontextlost')));
+  expect(screen.queryByTestId('scene')).toBeNull();
+  expect(screen.getByRole('heading', { name: 'Hybrid Intelligence' })).toBeVisible();
+});

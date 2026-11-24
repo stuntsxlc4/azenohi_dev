@@ -1,5 +1,7 @@
 # Application starter
 
+![Strona główna AzenoHI.dev: ekran „Hybrid Intelligence” ze sceną orbitalną](docs/home-preview/home.webp)
+
 Gotowa templatka aplikacji: React i TypeScript w `web`, FastAPI w `api`, PostgreSQL albo SQLite oraz wspólne uruchamianie przez Docker Compose. Szkielet AI używa LangGraph, lokalnej Ollamy, Neo4j dla grafu wiedzy i źródeł oraz Qdrant dla wektorów. Strona główna AzenoHI.dev wyświetla ekran „Hybrid Intelligence” ze sceną orbitalną. Przykładowy CRUD `items` jest dostępny w API i pozostaje w kodzie frontendu do wykorzystania przy budowie aplikacji. Uwierzytelnianie i uprawnienia dodajesz do konkretnej aplikacji.
 
 Jakość sprawdzamy lokalnie: strict TypeScript, lintowanie z informacją o typach, Prettier, Vitest, Playwright, Ruff, strict Pyright, pytest i dokumentacja. Audytu zależności ani GitHub Actions nie ma. Telemetria FastAPI, LangSmith i baz AI jest jawnie wyłączona; logi JSON i identyfikatory żądań zostają. Langfuse zapisuje świadomie skonfigurowane ślady operacji AI, domyślnie bez treści promptów i odpowiedzi.

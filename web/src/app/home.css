@@ -20,7 +20,7 @@ body:has(.home) {
   overflow: hidden;
   background: radial-gradient(
     ellipse at 67% 56%,
-    var(--midnight-blue) 0%,
+    color-mix(in srgb, var(--deep-red) 38%, var(--midnight-blue)) 0%,
     var(--deep-space) 44%,
     var(--space-black) 86%
   );
@@ -195,11 +195,8 @@ main.home-content {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(135deg, transparent 49.6%, var(--azeno-red) 50%, transparent 50.5%) left
-      bottom/9vw 9vw no-repeat,
-    linear-gradient(135deg, transparent 49.6%, var(--crimson) 50%, transparent 50.5%) right 78%/6vw
-      6vw no-repeat;
+  background: linear-gradient(135deg, transparent 49.6%, var(--crimson) 50%, transparent 50.5%)
+    right 78%/6vw 6vw no-repeat;
 }
 .home-foot button {
   color: var(--primary-white);
@@ -281,6 +278,8 @@ main.home-content {
   inset: -0.65%;
   pointer-events: none;
   background: url('/home/foreground.webp') center bottom / 100% 100% no-repeat;
+  /* Shift the plate's golden rim light toward the scene's red sunrise. */
+  filter: hue-rotate(-22deg) saturate(1.45) contrast(1.06);
   transform: translate3d(var(--drift-x, 0px), var(--drift-y, 0px), 0);
   transition: transform 0.45s ease-out;
 }
@@ -303,18 +302,18 @@ main.home-content {
   content: '';
   position: absolute;
   inset: -0.35%;
-  background: url('/home/distant-ridge.webp') center bottom / 100% 100% no-repeat;
-  transform: translate3d(calc(var(--drift-x, 0px) * 0.45), calc(var(--drift-y, 0px) * 0.45), 0);
-  transition: transform 0.5s ease-out;
-}
-@media (max-aspect-ratio: 1/1) {
-  .orbital-view::after {
-    background-size: auto 50%;
-    background-position: 25% bottom;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .orbital-view::after {
-    transition: none;
-  }
+  /* Crimson dawn grade over the orbital render, centred on the rising Sun. */
+  background:
+    radial-gradient(
+      ellipse 46% 40% at 55% 44%,
+      color-mix(in srgb, var(--azeno-red) 46%, transparent) 0%,
+      color-mix(in srgb, var(--crimson) 22%, transparent) 42%,
+      transparent 72%
+    ),
+    linear-gradient(
+      200deg,
+      transparent 30%,
+      color-mix(in srgb, var(--deep-red) 34%, transparent) 100%
+    );
+  mix-blend-mode: screen;
 }

@@ -21,9 +21,9 @@ void main() {
   float skyWeight = mix(0.26, 1.0, smoothstep(-0.034,0.006,offset.y));
   float streak = exp(-abs(offset.y)*295.0 - abs(offset.x)*18.0);
   float opacity = (1.0 - smoothstep(0.33,0.49,length(offset))) *
-    (skyWeight*(1.08*veil + 1.34*aureole) + 0.68*streak + photosphere*visible);
-  vec3 radiance = vec3(1.3,0.16,0.053) + aureole*vec3(2.4,0.94,0.25)
-    + streak*vec3(1.85,1.18,0.68) + photosphere*visible*vec3(11.0,8.0,4.5);
+    (skyWeight*(1.3*veil + 1.4*aureole) + 0.68*streak + photosphere*visible);
+  vec3 radiance = vec3(1.5,0.10,0.07) + aureole*vec3(2.7,0.50,0.17)
+    + streak*vec3(2.1,0.66,0.38) + photosphere*visible*vec3(11.0,6.6,3.8);
   gl_FragColor = vec4(radiance, min(1.0,opacity));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>

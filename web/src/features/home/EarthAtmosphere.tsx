@@ -102,14 +102,14 @@ void main() {
   float tangentAltitude = sqrt(impact2)-1.0;
   float limb = smoothstep(0.984,1.0,impact2);
   float crest = exp(-abs(tangentAltitude)/0.00085);
-  vec3 illumination = vec3(6.2,6.7,7.2) * mix(vec3(1.0),vec3(0.37,1.0,2.6),limb);
+  vec3 illumination = vec3(6.2,6.7,7.2) * mix(vec3(1.0),vec3(1.7,0.50,1.0),limb);
   illumination *= 1.0 + vec3(0.36,0.50,0.61)*crest;
   opacity *= 1.0-0.24*smoothstep(0.0019,0.0062,tangentAltitude);
   gl_FragColor = vec4(illumination*light/max(opacity,0.0005),opacity);
   #include <tonemapping_fragment>
-  // Preserve the pale azure crest through the filmic shoulder, in display
+  // Preserve the rose-violet crest through the filmic shoulder, in display
   // linear space. Ground away from the silhouette retains its natural colors.
-  gl_FragColor.rgb *= mix(vec3(1.0),vec3(0.50,0.82,1.04),smoothstep(0.984,0.999,impact2));
+  gl_FragColor.rgb *= mix(vec3(1.0),vec3(1.0,0.36,0.52),smoothstep(0.984,0.999,impact2));
   #include <colorspace_fragment>
 }`;
 

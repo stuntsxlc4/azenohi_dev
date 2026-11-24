@@ -1,0 +1,266 @@
+@font-face {
+  font-family: Montserrat Display;
+  src: url('/home/display.ttf') format('truetype');
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+}
+body:has(.home) {
+  margin: 0;
+  background: #060a13;
+  color: #f6f8fa;
+}
+.home {
+  position: relative;
+  isolation: isolate;
+  min-height: 620px;
+  height: 100svh;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 67% 56%, #152031 0%, #080d18 44%, #04060e 86%);
+  font-family: Arial, Helvetica, sans-serif;
+}
+.home:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/home/stars.png') repeat;
+  background-size: 640px 480px;
+  opacity: 0.23;
+  z-index: -3;
+}
+.orbital-view {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+  background: url('/home/orbit-desktop.webp') center/100% 100% no-repeat;
+}
+.orbital-view:has(canvas) {
+  background: none;
+}
+.home-header,
+.home-foot {
+  position: absolute;
+  left: 5.2%;
+  right: 5.2%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.home-header {
+  top: 0;
+  height: clamp(74px, 10.5vh, 110px);
+}
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  font-size: clamp(23px, 2.3vw, 40px);
+  font-weight: 750;
+  letter-spacing: -0.065em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.wordmark b {
+  color: #ef0018;
+}
+.wordmark small {
+  font-size: 1em;
+  letter-spacing: -0.045em;
+}
+.wordmark i {
+  align-self: center;
+  display: inline-block;
+  width: 1.45em;
+  height: 1em;
+  margin-right: 0.44em;
+  background: #ef0018;
+  clip-path: polygon(0 100%, 44% 0, 76% 0, 32% 100%, 0 100%, 44% 100%, 72% 34%, 100% 34%, 72% 100%);
+}
+.home-header nav {
+  display: flex;
+  gap: clamp(20px, 3.6vw, 62px);
+  align-self: stretch;
+  align-items: stretch;
+}
+.home-header nav > * {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: clamp(16px, 1.45vw, 25px);
+  letter-spacing: 0.035em;
+}
+.home-header nav span {
+  color: #e0e1df;
+}
+.home-header a {
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+}
+.home-header a:after {
+  content: '';
+  position: absolute;
+  bottom: 23%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #ef0018;
+  transform: skew(-28deg);
+}
+main.home-content {
+  position: absolute;
+  left: 5.2%;
+  top: 18%;
+  max-width: none;
+  margin: 0;
+}
+.heading-mark {
+  display: flex;
+  align-items: center;
+  gap: 2vw;
+  color: #fff4e3;
+  font-size: clamp(14px, 1.27vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.46em;
+  text-transform: uppercase;
+  margin-bottom: 4.6vh;
+}
+.heading-mark:after {
+  content: '';
+  width: 15vw;
+  height: 3px;
+  background: linear-gradient(90deg, #f1001a, transparent);
+}
+.home h1 {
+  font:
+    italic 750 clamp(58px, 5.8vw, 122px)/0.99 'Montserrat Display',
+    Arial,
+    sans-serif;
+  letter-spacing: -0.048em;
+  margin: 0;
+  color: #fff6e9;
+}
+.home h1 span {
+  display: block;
+}
+.home h1 em {
+  color: #f10018;
+}
+.home-tagline {
+  color: #b1b3b8;
+  font-size: clamp(18px, 1.72vw, 32px);
+  font-weight: 650;
+  margin: 2.7vh 0 4vh;
+}
+.home-actions {
+  display: flex;
+  gap: 2.1vw;
+  align-items: center;
+}
+.home-actions button:disabled {
+  opacity: 1;
+  cursor: default;
+  color: #fff7f2;
+  font:
+    600 clamp(14px, 1.14vw, 22px) Arial,
+    sans-serif;
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  padding: 10px 0;
+}
+.home-actions button:first-child {
+  padding: 0.8em 1.5em;
+  background: #bc0015;
+  border-radius: 8px;
+}
+.home-actions button span {
+  font-size: 1.25em;
+}
+.home-foot {
+  bottom: 3.3%;
+  justify-content: flex-end;
+}
+.home:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, transparent 49.6%, #e90017 50%, transparent 50.5%) left bottom/9vw 9vw
+      no-repeat,
+    linear-gradient(135deg, transparent 49.6%, #d00016 50%, transparent 50.5%) right 78%/6vw 6vw
+      no-repeat;
+}
+.home-foot button {
+  color: white;
+  background: #090e18dc;
+  border: 1px solid #bfcde366;
+  border-radius: 2px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  font:
+    600 12px Arial,
+    sans-serif;
+}
+.home-foot button:hover {
+  border-color: #fff;
+}
+.pause {
+  width: 7px;
+  height: 10px;
+  border-inline: 2px solid;
+}
+.play {
+  border-left: 8px solid;
+  border-block: 5px solid transparent;
+}
+@media (max-aspect-ratio: 1/1) {
+  .orbital-view {
+    background-image: url('/home/orbit-portrait.webp');
+  }
+  main.home-content {
+    top: 39%;
+  }
+  .home h1 {
+    font-size: clamp(46px, 10.3vw, 98px);
+  }
+}
+@media (max-width: 620px) {
+  .home {
+    min-height: 550px;
+  }
+  .home-header {
+    height: 102px;
+    align-content: center;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .home-header nav {
+    gap: 26px;
+    align-self: flex-start;
+  }
+  .home-header nav > * {
+    font-size: 13px;
+    min-height: 28px;
+  }
+  .home-header a:after {
+    bottom: -4px;
+  }
+  .heading-mark {
+    margin-bottom: 15px;
+  }
+  .home-actions {
+    gap: 18px;
+  }
+  .home-tagline {
+    margin: 16px 0 21px;
+  }
+}

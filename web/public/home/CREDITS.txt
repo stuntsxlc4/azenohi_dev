@@ -1,0 +1,7 @@
+Earth day, night and cloud maps by Solar System Scope, combined into a single texture.
+Source: https://www.solarsystemscope.com/textures/
+License: Creative Commons Attribution 4.0 International, https://creativecommons.org/licenses/by/4.0/
+The static Home view also renders this texture.
+Montserrat Italic by the Montserrat Project Authors, SIL Open Font License 1.1.
+Source: https://github.com/google/fonts/tree/main/ofl/montserrat
+See OFL.txt.

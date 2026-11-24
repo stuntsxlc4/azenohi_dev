@@ -2,27 +2,27 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { afterEach, expect, it, vi } from 'vitest';
-import { SRGBColorSpace, Texture } from 'three';
+import { Group } from 'three';
 import { App } from '../../app/App';
 
 const lifecycle = vi.hoisted(() => ({
   frame: (_state: unknown, _delta: number) => {},
-  width: 1200,
+  viewport: { width: 16, height: 9, dpr: 1 },
 }));
 const canvas = document.createElement('canvas');
-const texture = new Texture();
+const nodes = { Rotor: new Group(), Spindle: new Group() };
+vi.mock('./Planet', () => ({ Planet: () => null })); // Texture selection and orbital transforms have their own tests.
 vi.mock('@react-three/drei', () => ({
-  useTexture: (_url: string, loaded: (value: Texture) => void) => {
-    loaded(texture);
-    return texture;
-  },
+  useGLTF: () => ({ nodes }),
+  Environment: ({ children }: { children: ReactNode }) => <>{children}</>,
+  Lightformer: () => null,
 }));
 vi.mock('@react-three/fiber', () => ({
   useFrame: (callback: typeof lifecycle.frame) => {
     lifecycle.frame = callback;
   },
-  useThree: (select: (state: { viewport: { width: number; height: number } }) => unknown) =>
-    select({ viewport: { width: lifecycle.width, height: 800 } }),
+  useThree: (select: (state: { viewport: typeof lifecycle.viewport }) => unknown) =>
+    select(lifecycle),
   Canvas: ({
     onCreated,
     children,
@@ -40,30 +40,40 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
-
-it('moves the planet and ring independently, respects reduced motion and falls back on context loss', async () => {
+it('keeps the station still for reduced motion, budgets DPR and switches to the poster on context loss', async () => {
   vi.stubGlobal('WebGL2RenderingContext', Object);
   const media = Object.assign(new EventTarget(), { matches: true });
   vi.stubGlobal('matchMedia', () => media);
   const { container } = render(<App />);
   const play = await screen.findByRole('button', { name: 'Play animation' });
-  // The DOM host stands in for the GPU. Give the two referenced mesh nodes Three-style transforms.
-  const earth = container.querySelector('mesh[name="earth-surface"]');
-  const ring = container.querySelector('group[name="habitat-ring"]');
-  expect(earth).toBeTruthy();
-  expect(ring).toBeTruthy();
-  const earthRotation = { y: 2.5 },
-    ringRotation = { z: 0 };
-  Object.defineProperty(earth, 'rotation', { value: earthRotation });
-  Object.defineProperty(ring, 'rotation', { value: ringRotation });
-  lifecycle.frame(null, 2);
-  expect(ringRotation.z).toBe(0);
-  expect(texture.colorSpace).toBe(SRGBColorSpace);
-  lifecycle.width = 390;
+  const ring = container.querySelector('[name="habitat-ring"]');
+  const carrier = container.querySelector('[name="station-carrier"]');
+  const rotor = { z: 0 },
+    position = { y: 0 };
+  Object.defineProperty(ring, 'rotation', { value: rotor });
+  Object.defineProperties(carrier, {
+    position: { value: position },
+    rotation: { value: { z: 0 } },
+  });
+  const state = {
+    camera: { position: { x: 0, y: 0 } },
+    viewport: lifecycle.viewport,
+    setDpr: vi.fn<(value: number) => void>(),
+  };
+  lifecycle.frame(state, 1);
+  expect(rotor.z).toBe(0);
+  lifecycle.viewport.width = 5;
   fireEvent.click(play);
-  lifecycle.frame(null, 2);
-  expect(earthRotation.y).toBeCloseTo(2.532);
-  expect(ringRotation.z).toBeCloseTo(-0.4);
+  lifecycle.frame(state, 1);
+  expect(rotor.z).toBeCloseTo(-0.056);
+  expect(position.y).toBeGreaterThan(0);
+  for (let i = 0; i < 64; i++) lifecycle.frame(state, 0.041);
+  expect(state.setDpr).not.toHaveBeenCalled();
+  for (let i = 0; i < 51; i++) lifecycle.frame(state, 0.05);
+  expect(state.setDpr).toHaveBeenCalledWith(0.8);
+  state.viewport.dpr = 0.8;
+  for (let i = 0; i < 160; i++) lifecycle.frame(state, 0.016);
+  expect(state.setDpr).toHaveBeenCalledWith(1);
   await act(() => media.dispatchEvent(new Event('change')));
   expect(screen.getByRole('button', { name: 'Play animation' })).toBeInTheDocument();
   await act(() => canvas.dispatchEvent(new Event('webglcontextlost')));

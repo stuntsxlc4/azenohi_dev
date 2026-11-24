@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useEffect, useState } from 'react';
+import { Component, lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import './home.css';
 
@@ -23,8 +23,11 @@ class SceneBoundary extends Component<
 
 export function App() {
   const [moving, setMoving] = useState(() => !window.matchMedia?.(motionQuery).matches);
+  const pointer = useRef({ x: 0, y: 0 });
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const showScene = useCallback(() => setReady(true), []);
+  const showPoster = useCallback(() => setFailed(true), []);
   useEffect(() => {
     const media = window.matchMedia?.(motionQuery);
     const update = () => setMoving(!media?.matches);
@@ -33,20 +36,39 @@ export function App() {
   }, []);
   const available = typeof WebGL2RenderingContext !== 'undefined' && !failed;
   return (
-    <div className="home">
-      <div className="orbital-view" aria-hidden="true">
+    <div
+      className="home"
+      onPointerMove={(event) => {
+        if (!moving || event.pointerType === 'touch') return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        pointer.current.x = (2 * (event.clientX - rect.left)) / rect.width - 1;
+        pointer.current.y = (2 * (event.clientY - rect.top)) / rect.height - 1;
+        event.currentTarget.style.setProperty('--drift-x', `${pointer.current.x * -6}px`);
+        event.currentTarget.style.setProperty('--drift-y', `${pointer.current.y * -3}px`);
+      }}
+      onPointerLeave={(event) => {
+        if (!moving) return;
+        pointer.current.x = 0;
+        pointer.current.y = 0;
+        event.currentTarget.style.removeProperty('--drift-x');
+        event.currentTarget.style.removeProperty('--drift-y');
+      }}
+    >
+      <div className="orbital-view" data-rendered={available && ready} aria-hidden="true">
         {available && (
-          <SceneBoundary onFailure={() => setFailed(true)}>
+          <SceneBoundary onFailure={showPoster}>
             <Suspense fallback={null}>
               <OrbitScene
                 moving={moving}
-                onReady={() => setReady(true)}
-                onFailure={() => setFailed(true)}
+                pointer={pointer}
+                onReady={showScene}
+                onFailure={showPoster}
               />
             </Suspense>
           </SceneBoundary>
         )}
       </div>
+      <div className="home-foreground" aria-hidden="true" />
       <header className="home-header">
         <div className="wordmark">
           <i aria-hidden="true" />

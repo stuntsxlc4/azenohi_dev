@@ -94,3 +94,46 @@ test('opens all project details and restores the invoking card on the persistent
   await page.goBack();
   await expect(page.getByRole('link', { name: /Risk Miner/ })).toBeFocused();
 });
+
+test('opens the mountain Journey and supports keyboard and mobile interaction', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  const journeyLink = page.getByRole('navigation').getByRole('link', { name: 'Journey' });
+  await journeyLink.click();
+  await expect(page).toHaveURL('/journey');
+  await expect(page).toHaveTitle('AzenoHI.dev — Journey');
+  await expect(journeyLink).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+  await expect(page.locator('canvas')).toHaveCount(0);
+  const milestones = page
+    .getByRole('list', { name: 'Illustrative milestones' })
+    .getByRole('button');
+  await expect(milestones).toHaveCount(5);
+
+  await page.keyboard.press('Tab');
+  await expect(milestones.first()).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(milestones.first()).toHaveAttribute('aria-pressed', 'true');
+  await milestones.last().click();
+  await expect(milestones.last()).toHaveAttribute('aria-pressed', 'true');
+  await expect(milestones.first()).toHaveAttribute('aria-pressed', 'false');
+
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+  await page.goBack();
+  await expect(page).toHaveURL('/');
+  await page.goForward();
+  await expect(page).toHaveURL('/journey');
+  await page.goto('/journey/');
+  await expect(journeyLink).toHaveAttribute('aria-current', 'page');
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  expect(errors).toEqual([]);
+});

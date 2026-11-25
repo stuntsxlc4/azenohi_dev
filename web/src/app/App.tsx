@@ -4,16 +4,20 @@ import { BrowserRouter, Link, Route, Routes, useLocation } from 'react-router';
 import { ProjectsPage, ProjectDetailPage } from '../features/projects/ProjectPages';
 import { Home } from '../features/home/Home';
 import { Team } from '../features/team/Team';
+import { Journey } from '../features/journey/Journey';
+import { SiteHeader } from './SiteHeader';
 import { SceneShell } from './SceneShell';
 
 const returnPosition = z.object({ projectReturn: z.object({ id: z.string(), top: z.number() }) });
 
 function Pages() {
   const { pathname } = useLocation();
+  const isJourney = /^\/journey\/?$/.test(pathname);
   useLayoutEffect(() => {
     const heading = document.querySelector('h1');
-    const title =
-      pathname === '/'
+    const title = isJourney
+      ? 'Journey'
+      : pathname === '/'
         ? 'Hybrid Intelligence'
         : pathname === '/team'
           ? 'Team'
@@ -30,7 +34,17 @@ function Pages() {
       if (content) content.scrollTop = 0;
       heading?.focus({ preventScroll: true });
     }
-  }, [pathname]);
+  }, [isJourney, pathname]);
+  if (isJourney) {
+    return (
+      <div className="home scene-shell journey-shell">
+        <SiteHeader path={pathname} />
+        <div className="route-content">
+          <Journey />
+        </div>
+      </div>
+    );
+  }
   return (
     <SceneShell>
       <div className="route-content">

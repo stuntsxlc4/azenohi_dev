@@ -1,8 +1,4 @@
 import { Link, useLocation } from 'react-router';
-export function RouteLock() {
-  return <i className="route-lock" aria-hidden="true" />;
-}
-
 export function SiteHeader({ path }: { path: string }) {
   const { search } = useLocation();
   return (
@@ -25,10 +21,12 @@ export function SiteHeader({ path }: { path: string }) {
         >
           Projects
         </Link>
-        <span aria-disabled="true" title="Journey is not available yet">
+        <Link
+          to={`/journey${search}`}
+          aria-current={/^\/journey\/?$/.test(path) ? 'page' : undefined}
+        >
           Journey
-          <RouteLock />
-        </span>
+        </Link>
       </nav>
     </header>
   );

@@ -99,7 +99,7 @@ body:has(.home) {
   text-decoration: none;
   position: relative;
 }
-.home-header a:after {
+.home-header nav a[aria-current='page']:after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -273,7 +273,7 @@ main.home-content {
     font-size: 14px;
     min-height: var(--control-height);
   }
-  .home-header a:after {
+  .home-header nav a[aria-current='page']:after {
     bottom: 0;
   }
   .heading-mark {
@@ -308,4 +308,58 @@ main.home-content {
   .home-foreground {
     transition: none;
   }
+}
+
+.home-actions a {
+  color: var(--text-primary);
+  font: var(--type-action);
+  min-height: var(--control-height);
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 0;
+  text-decoration: none;
+}
+.home-actions a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+.home-header nav {
+  flex-wrap: wrap;
+}
+
+h1[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.scene-shell {
+  height: 100svh;
+  min-height: 0;
+}
+.scene-shell .orbital-view {
+  position: fixed;
+  inset: 0;
+}
+.scene-shell .home-header {
+  z-index: 5;
+}
+.route-content {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.scene-shell .home-foot {
+  position: fixed;
+  z-index: 6;
+}
+.scene-team .home-header {
+  background: linear-gradient(var(--space-black), transparent);
+}
+.scene-team::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 30%, #080c1640 55%, #080c16a8);
 }

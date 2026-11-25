@@ -12,3 +12,20 @@ it('renders the starter without requiring a backend request', () => {
   expect(screen.getByRole('main')).toHaveTextContent('Hybrid Intelligence');
   expect(fetcher).not.toHaveBeenCalled();
 });
+
+it('renders Team on direct entry and focuses the titled page', () => {
+  window.history.replaceState(null, '', '/team');
+  render(<App />);
+  expect(document.title).toBe('AzenoHI.dev — Team');
+  expect(screen.getByRole('heading', { level: 1 })).toHaveFocus();
+  expect(screen.getByRole('link', { name: /^Team$/ })).toHaveAttribute('aria-current', 'page');
+  window.history.replaceState(null, '', '/');
+});
+
+it('provides a recovery link for unknown paths', () => {
+  window.history.replaceState(null, '', '/unknown');
+  render(<App />);
+  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Page not found');
+  expect(screen.getByRole('link', { name: 'Return Home' })).toHaveAttribute('href', '/');
+  window.history.replaceState(null, '', '/');
+});

@@ -9,6 +9,7 @@ import { Station } from './Station';
 import { getEarthQuality } from './earthQuality';
 
 interface MotionProps {
+  view?: 'home' | 'team';
   moving: boolean;
   pointer: RefObject<{ x: number; y: number }>;
 }
@@ -47,6 +48,7 @@ function ReflectedLight() {
 
 function Orbit({
   moving,
+  view = 'home',
   pointer,
   onReady,
   onDprChange,
@@ -58,6 +60,7 @@ function Orbit({
   const ring = useRef<Group>(null);
   const station = useRef<Group>(null);
   const flightTime = useRef(0);
+  const frameMetrics = useRef({ seconds: 0, frames: 0 });
   const samples = useRef({ warmup: 0, seconds: 0, frames: 0 });
   const quality = useThree((s) => getEarthQuality(s.gl.capabilities, s.size.width));
   const nativeDpr = window.devicePixelRatio || 1;
@@ -76,9 +79,36 @@ function Orbit({
   }, [moving]);
   const { width, height } = useThree((state) => state.viewport);
   const portrait = width < height;
+  const camera = useThree((state) => state.camera);
+  const invalidate = useThree((state) => state.invalidate);
+  const routeY = view === 'team' ? height * 0.04 : 0;
+  useLayoutEffect(() => {
+    if (!moving) {
+      camera.position.set(0, routeY, camera.position.z);
+      invalidate();
+    }
+  }, [camera, invalidate, moving, routeY]);
   useFrame((state, delta) => {
     if (!moving || !ring.current || !station.current) return;
     flightTime.current += delta;
+    if (flightTime.current > 8 && !document.hidden) {
+      const metrics = frameMetrics.current;
+      metrics.seconds += delta;
+      metrics.frames += 1;
+      if (metrics.seconds >= 5) {
+        const canvas = state.gl?.domElement;
+        if (canvas)
+          canvas.dataset['frameSample'] = JSON.stringify({
+            fps: metrics.frames / metrics.seconds,
+            seconds: metrics.seconds,
+            dpr: state.viewport.dpr,
+            width: canvas.clientWidth,
+            height: canvas.clientHeight,
+          });
+        metrics.seconds = 0;
+        metrics.frames = 0;
+      }
+    }
     ring.current.rotation.z -= delta * 0.056;
     station.current.position.y = Math.sin(flightTime.current * 0.18) * height * 0.0018;
     station.current.rotation.z = Math.sin(flightTime.current * 0.095) * 0.008;
@@ -90,7 +120,7 @@ function Orbit({
     );
     state.camera.position.y = MathUtils.damp(
       state.camera.position.y,
-      -pointer.current.y * 0.023,
+      routeY - pointer.current.y * 0.023,
       5,
       delta,
     );
@@ -136,6 +166,7 @@ function Orbit({
 
 export default function OrbitScene({
   moving,
+  view = 'home',
   pointer,
   onReady,
   onFailure,
@@ -160,7 +191,7 @@ export default function OrbitScene({
         gl.domElement.addEventListener('webglcontextlost', onFailure, { once: true });
       }}
     >
-      <Orbit moving={moving} pointer={pointer} onReady={onReady} onDprChange={setDpr} />
+      <Orbit view={view} moving={moving} pointer={pointer} onReady={onReady} onDprChange={setDpr} />
     </Canvas>
   );
 }

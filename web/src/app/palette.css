@@ -1,33 +1,33 @@
 :root {
-  --space-black: #03060c;
+  --space-black: #05070d;
   --deep-space: #080c16;
-  --dark-navy: #101522;
-  --midnight-blue: #14243a;
+  --dark-navy: #111827;
+  --midnight-blue: #161d35;
   --space-slate: #233b54;
 
   --deep-ocean: #102c49;
   --ocean-blue: #24557f;
-  --orbital-blue: #397bde;
-  --atmospheric-blue: #71b9f5;
+  --orbital-blue: #214779;
+  --atmospheric-blue: #529bff;
   --horizon-glow: #b9e2ff;
 
   --sunrise-copper: #d66a39;
-  --solar-orange: #ff914d;
-  --solar-amber: #ffc078;
+  --solar-orange: #ff7849;
+  --solar-amber: #ffc77a;
   --city-lights: #ffd5a0;
-  --solar-white: #fff1d6;
+  --solar-white: #ffe8cc;
 
   --deep-red: #790b1b;
-  --crimson: #c90023;
-  --azeno-red: #ff002b;
-  --signal-red: #ff334d;
+  --crimson: #a50830;
+  --azeno-red: #ff002e;
+  --signal-red: #ff1744;
   --red-glow: #ff6677;
 
   --gunmetal: #303b49;
   --steel: #657487;
-  --muted-text: #a5a8b8;
+  --muted-text: #b2b9cc;
   --cloud-silver: #dce5ef;
-  --primary-white: #f5f5f7;
+  --primary-white: #f5f7fa;
 }
 
 :root {
@@ -69,4 +69,13 @@
   --space-medium: 1rem;
   --control-height: 2.75rem;
   --control-radius: 0.5rem;
+}
+
+:root {
+  --card-surface: #151827;
+  --card-border: #303348;
+  --cosmic-violet: #6453a6;
+  --electric-blue: #387bff;
+  --deep-burgundy: #480d20;
+  --text-muted: #858da3;
 }

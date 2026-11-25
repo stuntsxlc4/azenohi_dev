@@ -76,7 +76,7 @@ test('opens all project details and restores the invoking card on the persistent
       .locator('.project-card')
       .filter({ has: page.getByRole('heading', { name, exact: true }) });
     await card.focus();
-    const top = await page.locator('.route-content').evaluate((el) => el.scrollTop);
+    const top = await page.locator('.route-content:not([inert])').evaluate((el) => el.scrollTop);
     await page.keyboard.press('Enter');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(name);
     expect(await canvas?.evaluate((el) => el === document.querySelector('canvas'))).toBe(true);
@@ -85,7 +85,9 @@ test('opens all project details and restores the invoking card on the persistent
       .first()
       .click();
     await expect(card).toBeFocused();
-    expect(await page.locator('.route-content').evaluate((el) => el.scrollTop)).toBe(top);
+    expect(await page.locator('.route-content:not([inert])').evaluate((el) => el.scrollTop)).toBe(
+      top,
+    );
   }
   await page.goForward();
   await expect(page).toHaveTitle('AzenoHI.dev — Risk Miner');
@@ -97,6 +99,7 @@ test('opens all project details and restores the invoking card on the persistent
 
 test('opens the mountain Journey and supports keyboard and mobile interaction', async ({
   page,
+  browserName,
 }) => {
   const errors: string[] = [];
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -112,13 +115,15 @@ test('opens the mountain Journey and supports keyboard and mobile interaction', 
   await expect(page).toHaveTitle('AzenoHI.dev — Journey');
   await expect(journeyLink).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
-  await expect(page.locator('canvas')).toHaveCount(0);
+  await expect(page.locator('.orbital-view')).toHaveCSS('visibility', 'hidden');
   const milestones = page
     .getByRole('list', { name: 'Illustrative milestones' })
     .getByRole('button');
   await expect(milestones).toHaveCount(5);
 
-  await page.keyboard.press('Tab');
+  // macOS WebKit uses Option-Tab to traverse controls with its default keyboard settings.
+  const traverse = browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
+  await page.keyboard.press(traverse);
   await expect(milestones.first()).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(milestones.first()).toHaveAttribute('aria-pressed', 'true');
@@ -136,4 +141,60 @@ test('opens the mountain Journey and supports keyboard and mobile interaction', 
   await expect(journeyLink).toHaveAttribute('aria-current', 'page');
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   expect(errors).toEqual([]);
+});
+
+test('keeps the header and paused orbit through an interrupted environment transition', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const nav = page.getByRole('navigation');
+  const pause = page.getByRole('button', { name: 'Pause animation' });
+  await pause.click();
+  const canvas = await page.locator('canvas').elementHandle();
+  const header = await nav.elementHandle();
+  await nav.getByRole('link', { name: 'Journey' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+  await nav.getByRole('link', { name: 'Team' }).click();
+  await page.goBack();
+  await expect(page.locator('.orbital-view')).toHaveCSS('visibility', 'hidden');
+  await page.goForward();
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Play animation' })).toBeVisible();
+  expect(await canvas?.evaluate((node) => node === document.querySelector('canvas'))).toBe(true);
+  expect(await header?.evaluate((node) => node === document.querySelector('nav'))).toBe(true);
+  await expect(page.getByRole('main')).toHaveCount(1);
+  await page.goto('/journey');
+  await expect(page.locator('canvas')).toHaveCount(0);
+});
+
+test('keeps navigation usable during a slow panorama load and a failed project image', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'WebGL2RenderingContext', { value: undefined });
+  });
+  let release!: () => void;
+  const hold = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route('**/journey/mountain.webp', async (route) => {
+    await hold;
+    await route.continue();
+  });
+  await page.route('**/captrace.webp', (route) => route.abort());
+  try {
+    await page.goto('/projects/captrace', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('CapTrace');
+    const nav = page.getByRole('navigation');
+    await nav.getByRole('link', { name: 'Journey' }).click();
+    await page.setViewportSize({ width: 844, height: 390 });
+    await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+    await nav.getByRole('link', { name: 'Team' }).click();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('People × AI');
+    await expect(page.locator('canvas')).toHaveCount(0);
+    await expect(page.locator('.orbital-view')).toHaveAttribute('data-rendered', 'false');
+  } finally {
+    release();
+  }
 });

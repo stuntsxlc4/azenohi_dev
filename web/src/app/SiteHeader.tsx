@@ -12,7 +12,7 @@ export function SiteHeader({ path }: { path: string }) {
         <Link to={`/${search}`} aria-current={path === '/' ? 'page' : undefined}>
           Home
         </Link>
-        <Link to={`/team${search}`} aria-current={path === '/team' ? 'page' : undefined}>
+        <Link to={`/team${search}`} aria-current={/^\/team\/?$/.test(path) ? 'page' : undefined}>
           Team
         </Link>
         <Link

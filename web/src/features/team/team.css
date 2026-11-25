@@ -12,7 +12,7 @@ main.team-content {
 .team-content .heading-mark::after {
   width: 9vw;
 }
-.scene-team .team-content h1 {
+.home .team-content h1 {
   font-size: clamp(3rem, 4.75vw, 7rem);
 }
 .team-grid {
@@ -33,12 +33,12 @@ main.team-content {
   border-radius: var(--panel-radius);
   background: var(--panel-ink);
   transition:
-    transform 180ms ease,
-    border-color 180ms ease;
+    transform var(--duration-fast) var(--easing-enter),
+    border-color var(--duration-fast) var(--easing-standard);
 }
 .member-card:hover,
 .member-card:focus-within {
-  transform: translateY(-3px);
+  transform: translateY(var(--hover-offset));
   border-color: var(--crimson);
 }
 .member-card > img {
@@ -58,6 +58,10 @@ main.team-content {
   position: absolute;
   inset: 0;
   background: linear-gradient(137deg, transparent 69%, #ae163328 69.3%, transparent 81%);
+  transition: var(--transition-opacity);
+}
+.member-card:hover::after {
+  opacity: 0.7;
 }
 .portrait-placeholder {
   position: absolute;
@@ -180,5 +184,14 @@ main.team-content {
   .member-card:hover,
   .member-card:focus-within {
     transform: none;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .member-card .technology-icon {
+    transition: var(--transition-scale);
+  }
+  .member-card:hover .technology-icon {
+    scale: 1.035;
   }
 }

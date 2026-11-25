@@ -1,0 +1,76 @@
+Web
+      Tests  52 passed (52)
+Statements   : 96.47% ( 492/510 )
+Branches     : 94.15% ( 403/428 )
+Functions    : 94.4% ( 135/143 )
+Lines        : 97.09% ( 435/448 )
+✓ built in 398ms
+
+API
+  py314: OK (10.15=setup[0.13]+cmd[10.02] seconds)
+  lint: OK (0.22=setup[0.13]+cmd[0.06,0.02] seconds)
+  type: OK (3.97=setup[0.13]+cmd[3.84] seconds)
+  docs: OK (2.51=setup[0.13]+cmd[2.38] seconds)
+  congratulations :) (10.21 seconds)
+
+Compose
+docker compose config --quiet
+
+Spec Kit
+specify integration status
+Integration status: OK
+Default integration: codex
+Installed integrations: codex
+Multi-install safe: yes
+Shared templates target alignment: codex
+Modified managed files: 0
+Missing managed files: 0
+Invalid manifest paths: 0
+Unchecked manifests: 0
+
+Pre-commit
+Agent CLI environment checks.............................................Passed
+Ruff lint................................................................Passed
+Ruff format..............................................................Passed
+Strict Pyright...........................................................Passed
+Tests and coverage (90%, with branches)..................................Passed
+Sphinx documentation (warnings as errors)................................Passed
+Web type-aware lint......................................................Passed
+Web formatting...........................................................Passed
+Web strict TypeScript....................................................Passed
+Web unit tests and coverage (90%)........................................Passed
+Web Playwright Chromium and production build.............................Passed
+Docker Compose configuration.............................................Passed
+
+Browser matrix
+  ✓   1 [chromium] › e2e/items.spec.ts:26:1 › renders accessible start navigation at the configured viewport (2.6s)
+  ✓   2 [chromium] › e2e/items.spec.ts:68:1 › connects the frontend proxy to the real API and persists an example resource (214ms)
+  ✓   3 [chromium] › e2e/items.spec.ts:112:1 › loads the page without depending on API availability (158ms)
+  ✓   4 [chromium] › e2e/navigation.spec.ts:4:1 › navigates with menu, CTA, direct entry, refresh and history (3.2s)
+  ✓   5 [chromium] › e2e/navigation.spec.ts:27:1 › keeps navigation and cards accessible at narrow widths (435ms)
+  ✓   6 [chromium] › e2e/navigation.spec.ts:44:1 › preserves the same Canvas and pause state through client navigation (14.2s)
+  ✓   7 [chromium] › e2e/navigation.spec.ts:63:1 › opens all project details and restores the invoking card on the persistent scene (10.0s)
+  ✓   8 [chromium] › e2e/navigation.spec.ts:100:1 › opens the mountain Journey and supports keyboard and mobile interaction (848ms)
+  ✓   9 [chromium] › e2e/navigation.spec.ts:146:1 › keeps the header and paused orbit through an interrupted environment transition (7.6s)
+  ✓  10 [chromium] › e2e/navigation.spec.ts:170:1 › keeps navigation usable during a slow panorama load and a failed project image (356ms)
+  ✓  11 [webkit] › e2e/items.spec.ts:26:1 › renders accessible start navigation at the configured viewport (2.6s)
+  ✓  12 [webkit] › e2e/items.spec.ts:68:1 › connects the frontend proxy to the real API and persists an example resource (802ms)
+  ✓  13 [webkit] › e2e/items.spec.ts:112:1 › loads the page without depending on API availability (709ms)
+  ✓  14 [webkit] › e2e/navigation.spec.ts:4:1 › navigates with menu, CTA, direct entry, refresh and history (1.9s)
+  ✓  15 [webkit] › e2e/navigation.spec.ts:27:1 › keeps navigation and cards accessible at narrow widths (1.1s)
+  ✓  16 [webkit] › e2e/navigation.spec.ts:44:1 › preserves the same Canvas and pause state through client navigation (4.3s)
+  ✓  17 [webkit] › e2e/navigation.spec.ts:63:1 › opens all project details and restores the invoking card on the persistent scene (4.0s)
+  ✓  18 [webkit] › e2e/navigation.spec.ts:100:1 › opens the mountain Journey and supports keyboard and mobile interaction (1.2s)
+  ✓  19 [webkit] › e2e/navigation.spec.ts:146:1 › keeps the header and paused orbit through an interrupted environment transition (3.6s)
+  ✓  20 [webkit] › e2e/navigation.spec.ts:170:1 › keeps navigation usable during a slow panorama load and a failed project image (695ms)
+  ✓  21 [mobile-chromium] › e2e/items.spec.ts:26:1 › renders accessible start navigation at the configured viewport (3.3s)
+  ✓  22 [mobile-chromium] › e2e/items.spec.ts:68:1 › connects the frontend proxy to the real API and persists an example resource (642ms)
+  ✓  23 [mobile-chromium] › e2e/items.spec.ts:112:1 › loads the page without depending on API availability (592ms)
+  ✓  24 [mobile-chromium] › e2e/navigation.spec.ts:4:1 › navigates with menu, CTA, direct entry, refresh and history (1.4s)
+  ✓  25 [mobile-chromium] › e2e/navigation.spec.ts:27:1 › keeps navigation and cards accessible at narrow widths (296ms)
+  ✓  26 [mobile-chromium] › e2e/navigation.spec.ts:44:1 › preserves the same Canvas and pause state through client navigation (8.9s)
+  ✓  27 [mobile-chromium] › e2e/navigation.spec.ts:63:1 › opens all project details and restores the invoking card on the persistent scene (7.5s)
+  ✓  28 [mobile-chromium] › e2e/navigation.spec.ts:100:1 › opens the mountain Journey and supports keyboard and mobile interaction (2.6s)
+  ✓  29 [mobile-chromium] › e2e/navigation.spec.ts:146:1 › keeps the header and paused orbit through an interrupted environment transition (5.0s)
+  ✓  30 [mobile-chromium] › e2e/navigation.spec.ts:170:1 › keeps navigation usable during a slow panorama load and a failed project image (472ms)
+  30 passed (1.6m)

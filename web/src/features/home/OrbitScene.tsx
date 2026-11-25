@@ -11,6 +11,8 @@ import { getEarthQuality } from './earthQuality';
 interface MotionProps {
   view?: 'home' | 'team' | 'projects' | 'detail' | 'caseStudy';
   moving: boolean;
+  active: boolean;
+  parallax: boolean;
   pointer: RefObject<{ x: number; y: number }>;
 }
 
@@ -62,7 +64,9 @@ function ReflectedLight() {
 }
 
 function Orbit({
+  active,
   moving,
+  parallax,
   view = 'home',
   pointer,
   onReady,
@@ -106,22 +110,42 @@ function Orbit({
   const [mount] = useState(() => new Group());
   const placed = useRef(false);
   useLayoutEffect(() => {
-    if (!placed.current || !moving) {
+    if (!placed.current || !parallax || !moving) {
       mount.position.set(stationX, stationY, 1);
       mount.scale.setScalar(stationSize);
       camera.position.set(0, routeY, camera.position.z);
       placed.current = true;
-      invalidate();
     }
-  }, [camera, invalidate, mount, moving, routeY, stationX, stationY, stationSize]);
+    if (active) invalidate();
+  }, [
+    active,
+    camera,
+    invalidate,
+    mount,
+    moving,
+    parallax,
+    routeY,
+    stationX,
+    stationY,
+    stationSize,
+  ]);
   useFrame((state, delta) => {
-    if (!moving || !ring.current || !station.current) return;
-    mount.position.set(
-      MathUtils.damp(mount.position.x, stationX, 6, delta),
-      MathUtils.damp(mount.position.y, stationY, 6, delta),
-      1,
-    );
-    mount.scale.setScalar(MathUtils.damp(mount.scale.x, stationSize, 6, delta));
+    if (!active || !moving || !ring.current || !station.current) return;
+    if (parallax) {
+      const step = Math.min(delta, 0.05);
+      const cameraX = pointer.current.x * 0.034;
+      const cameraY = routeY - pointer.current.y * 0.023;
+      const approach = (value: number, target: number, speed: number) =>
+        Math.abs(value - target) < 0.001 ? target : MathUtils.damp(value, target, speed, step);
+      mount.position.set(
+        approach(mount.position.x, stationX, 10),
+        approach(mount.position.y, stationY, 10),
+        1,
+      );
+      mount.scale.setScalar(approach(mount.scale.x, stationSize, 10));
+      state.camera.position.x = approach(state.camera.position.x, cameraX, 10);
+      state.camera.position.y = approach(state.camera.position.y, cameraY, 10);
+    }
     flightTime.current += delta;
     if (flightTime.current > 8 && !document.hidden) {
       const metrics = frameMetrics.current;
@@ -144,18 +168,6 @@ function Orbit({
     ring.current.rotation.z -= delta * 0.056;
     station.current.position.y = Math.sin(flightTime.current * 0.18) * height * 0.0018;
     station.current.rotation.z = Math.sin(flightTime.current * 0.095) * 0.008;
-    state.camera.position.x = MathUtils.damp(
-      state.camera.position.x,
-      pointer.current.x * 0.034,
-      5,
-      delta,
-    );
-    state.camera.position.y = MathUtils.damp(
-      state.camera.position.y,
-      routeY - pointer.current.y * 0.023,
-      5,
-      delta,
-    );
     // Start measuring only after the loaded, visible scene has animated for eight seconds.
     // A second eight-second window keeps a compile or tab switch from downgrading Retina.
     // Ultra keeps its native buffer even when the OS limits refresh on battery.
@@ -194,7 +206,9 @@ function Orbit({
 }
 
 export default function OrbitScene({
+  active,
   moving,
+  parallax,
   view = 'home',
   pointer,
   onReady,
@@ -207,7 +221,7 @@ export default function OrbitScene({
       orthographic
       camera={{ position: [0, 0, 10], zoom: 80, near: 0.1, far: 500 }}
       dpr={dpr}
-      frameloop={moving ? 'always' : 'demand'}
+      frameloop={!active ? 'never' : moving ? 'always' : 'demand'}
       gl={{
         alpha: true,
         antialias: true,
@@ -220,7 +234,15 @@ export default function OrbitScene({
         gl.domElement.addEventListener('webglcontextlost', onFailure, { once: true });
       }}
     >
-      <Orbit view={view} moving={moving} pointer={pointer} onReady={onReady} onDprChange={setDpr} />
+      <Orbit
+        view={view}
+        active={active}
+        moving={active && moving}
+        parallax={parallax}
+        pointer={pointer}
+        onReady={onReady}
+        onDprChange={setDpr}
+      />
     </Canvas>
   );
 }

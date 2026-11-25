@@ -110,3 +110,18 @@
     transparent 53.2%
   );
 }
+
+:root {
+  --duration-fast: 180ms;
+  --duration-normal: 380ms;
+  --duration-slow: 460ms;
+  --duration-detail: 420ms;
+  --duration-cinematic: 900ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --easing-emphasized: cubic-bezier(0.55, 0, 0.2, 1);
+  --hover-offset: -3px;
+  --transition-opacity: opacity var(--duration-fast) var(--easing-standard);
+  --transition-scale: scale var(--duration-normal) var(--easing-enter);
+}

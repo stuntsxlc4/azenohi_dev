@@ -99,7 +99,13 @@ body:has(.home) {
   text-decoration: none;
   position: relative;
 }
-.home-header nav a[aria-current='page']:after {
+.home-header nav a {
+  transition: color var(--duration-fast) var(--easing-standard);
+}
+.home-header nav a:hover {
+  color: var(--cloud-silver);
+}
+.home-header nav a::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -107,7 +113,16 @@ body:has(.home) {
   right: 0;
   height: 3px;
   background: var(--brand-accent);
-  transform: skew(-28deg);
+  opacity: 0;
+  transform: skew(-28deg) scaleX(0.45);
+  transform-origin: left;
+  transition:
+    var(--transition-opacity),
+    transform var(--duration-fast) var(--easing-enter);
+}
+.home-header nav a[aria-current='page']::after {
+  opacity: 1;
+  transform: skew(-28deg) scaleX(1);
 }
 main.home-content {
   position: absolute;
@@ -273,9 +288,6 @@ main.home-content {
     font-size: 14px;
     min-height: var(--control-height);
   }
-  .home-header nav a[aria-current='page']:after {
-    bottom: 0;
-  }
   .heading-mark {
     margin-bottom: 15px;
   }
@@ -296,7 +308,7 @@ main.home-content {
   background: url('/home/foreground.webp') center bottom / 100% 100% no-repeat;
   filter: saturate(1.22) hue-rotate(-12deg);
   transform: translate3d(var(--drift-x, 0px), var(--drift-y, 0px), 0);
-  transition: transform 0.45s ease-out;
+  transition: transform var(--duration-slow) var(--easing-enter);
 }
 @media (max-aspect-ratio: 1/1) {
   .home-foreground {
@@ -377,18 +389,202 @@ h1[tabindex='-1']:focus {
     linear-gradient(0deg, #090c1ac4, transparent 57%),
     radial-gradient(ellipse at 56% 44%, #e942221f, transparent 28%);
 }
+
+.orbital-view[data-covered='true'] {
+  visibility: hidden;
+}
+.orbital-content[data-outgoing]:not(.portfolio-content) {
+  position: absolute;
+  inset: 0;
+}
+.orbital-content[inert] {
+  pointer-events: none;
+  opacity: 0;
+}
+.scene-shell .mountain-content {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  z-index: 2;
+  background: var(--sky-gradient);
+  opacity: 0;
+  visibility: hidden;
+}
+.scene-shell[data-environment='mountain'] .mountain-content {
+  opacity: 1;
+  visibility: visible;
+}
+.scene-shell[data-environment='mountain'] .home-header {
+  background: transparent;
+}
+.scene-shell::before,
+.scene-shell::after,
+.orbital-view::after {
+  pointer-events: none;
+}
+
+.home-actions a,
+.home-foot button {
+  transition:
+    background-color var(--duration-fast) var(--easing-standard),
+    border-color var(--duration-fast) var(--easing-standard),
+    translate var(--duration-fast) var(--easing-enter);
+}
+.home-actions a:active,
+.home-foot button:active {
+  translate: 0 1px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .route-content > main {
-    animation: route-arrive 220ms ease-out both;
+  .orbital-content {
+    transition: opacity var(--duration-fast) var(--easing-standard);
+  }
+  .orbital-content[data-outgoing] {
+    animation: route-depart var(--duration-fast) var(--easing-standard) both;
+  }
+  @keyframes route-depart {
+    from {
+      opacity: 1;
+    }
+  }
+  .scene-shell:not([data-arrival='initial']) .mountain-content {
+    transition:
+      opacity var(--duration-cinematic) var(--easing-emphasized),
+      visibility 0s var(--duration-cinematic);
+  }
+  .scene-shell[data-environment='mountain']:not([data-arrival='initial']) .mountain-content {
+    transition-delay: 0s;
+  }
+  .scene-shell[data-environment='orbit'][data-arrival='environment'] .mountain-content {
+    transition-timing-function: var(--easing-standard), linear;
+  }
+  @starting-style {
+    .scene-shell[data-arrival='environment'][data-environment='mountain'] .mountain-content {
+      opacity: 0;
+    }
+  }
+
+  .scene-shell[data-arrival='environment'] .mountain-content::after {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    content: '';
+    background:
+      radial-gradient(ellipse at 72% 48%, #e8784740, transparent 57%),
+      linear-gradient(166deg, transparent 42%, #af43282b 61%, transparent 78%);
+    animation: atmospheric-light var(--duration-cinematic) var(--easing-standard) both;
+  }
+  .scene-shell[data-environment='orbit'][data-arrival='environment'] .mountain-content::after {
+    animation-name: atmospheric-light-out;
+  }
+
+  .scene-shell[data-arrival]:not([data-arrival='initial']) .orbital-content:not([inert]) > main {
+    animation: var(--arrival-animation, route-arrive)
+      var(--arrival-duration, var(--duration-normal)) var(--easing-enter) both;
+  }
+  .scene-shell[data-arrival='team'] {
+    --arrival-duration: var(--duration-slow);
+    --arrival-offset: 9px;
+  }
+  .scene-shell[data-arrival='catalogue'] {
+    --arrival-offset: 4px;
+  }
+  .scene-shell[data-arrival='catalogue-return'] {
+    --arrival-offset: -4px;
+  }
+  .scene-shell[data-arrival='detail'] {
+    --arrival-duration: var(--duration-detail);
+    --arrival-offset: 7px;
+  }
+  .scene-shell[data-arrival='detail'] .detail-hero .project-art {
+    animation: artwork-arrive var(--duration-detail) var(--easing-enter) both;
+  }
+  .scene-shell[data-environment='orbit'][data-arrival='environment'] {
+    --arrival-duration: var(--duration-cinematic);
+    --arrival-animation: orbital-arrive;
+  }
+  .mountain-content[inert] :is(.journey-copy, .journey-timeline, .journey-note, .journey-summit) {
+    opacity: 0;
+    transition: var(--transition-opacity);
+  }
+  .mountain-content[inert] .journey-checkpoint::after {
+    animation-play-state: paused;
+  }
+  .scene-shell[data-environment='mountain'][data-arrival='environment'] .journey-copy,
+  .scene-shell[data-environment='mountain'][data-arrival='environment'] .journey-timeline {
+    animation: orbital-arrive var(--duration-cinematic) var(--easing-standard) both;
+  }
+  .scene-shell[data-environment='mountain'][data-arrival='environment'] .journey-timeline {
+    animation-name: checkpoints-arrive;
   }
   @keyframes route-arrive {
+    0%,
+    28% {
+      opacity: 0;
+      translate: 0 var(--arrival-offset, 5px);
+    }
+  }
+  @keyframes artwork-arrive {
     from {
-      opacity: 0.6;
+      opacity: 0.66;
+      scale: 0.985;
+    }
+  }
+  @keyframes orbital-arrive {
+    0%,
+    28% {
+      opacity: 0;
+      translate: 0 7px;
+    }
+  }
+  @keyframes checkpoints-arrive {
+    0%,
+    48% {
+      opacity: 0;
       translate: 0 4px;
     }
-    to {
-      opacity: 1;
-      translate: 0 0;
+  }
+  @keyframes atmospheric-light {
+    0%,
+    100% {
+      opacity: 0;
     }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes atmospheric-light-out {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    35% {
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-header nav a,
+  .home-header nav a::after,
+  .home-actions a,
+  .home-foot button {
+    transition: none;
+  }
+  .home-actions a:active,
+  .home-foot button:active {
+    translate: none;
+  }
+}
+
+.scene-shell:not(.scene-home) .home-foreground,
+.scene-shell[data-environment='mountain'] .home-foreground {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-foreground {
+    transition:
+      transform var(--duration-slow) var(--easing-enter),
+      var(--transition-opacity);
   }
 }

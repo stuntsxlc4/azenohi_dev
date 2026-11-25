@@ -1,0 +1,272 @@
+{
+  "browser": "158.0.8127.38",
+  "matrix": [
+    {
+      "width": 768,
+      "height": 1024,
+      "dpr": 1,
+      "samples": {
+        "home": [
+          {
+            "raf": {
+              "fps": 60,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 19883574,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          },
+          {
+            "raf": {
+              "fps": 60.004286020430044,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60.004286020430044,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 22179666,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          },
+          {
+            "raf": {
+              "fps": 59.99571459181485,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 59.99571459181485,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 17848181,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          }
+        ],
+        "team": [
+          {
+            "raf": {
+              "fps": 60,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60,
+              "median": 16.69999999999891,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000109,
+              "longest": 16.80000000000109,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1317,
+            "drawsPerFrame": 15.494117647058824,
+            "longTasks": [],
+            "heap": 21677965,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          },
+          {
+            "raf": {
+              "fps": 60.00428602043012,
+              "median": 16.69999999999709,
+              "p95": 16.700000000000728,
+              "p99": 16.799999999999272,
+              "longest": 16.799999999999272,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60.00428602043012,
+              "median": 16.69999999999709,
+              "p95": 16.700000000000728,
+              "p99": 16.799999999999272,
+              "longest": 16.799999999999272,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 23879773,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          },
+          {
+            "raf": {
+              "fps": 60.00857265323621,
+              "median": 16.69999999999709,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000291,
+              "longest": 16.80000000000291,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60.00857265323621,
+              "median": 16.69999999999709,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000291,
+              "longest": 16.80000000000291,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 19692277,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          }
+        ],
+        "projects": [
+          {
+            "raf": {
+              "fps": 60,
+              "median": 16.700000000000728,
+              "p95": 16.700000000000728,
+              "p99": 16.80000000000291,
+              "longest": 16.80000000000291,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60,
+              "median": 16.700000000000728,
+              "p95": 16.700000000000728,
+              "p99": 16.80000000000291,
+              "longest": 16.80000000000291,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 23164173,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          },
+          {
+            "raf": {
+              "fps": 60.004286020429966,
+              "median": 16.69999999999709,
+              "p95": 16.799999999999272,
+              "p99": 16.799999999999272,
+              "longest": 16.799999999999272,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60.004286020429966,
+              "median": 16.69999999999709,
+              "p95": 16.799999999999272,
+              "p99": 16.799999999999272,
+              "longest": 16.799999999999272,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 18984373,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          },
+          {
+            "raf": {
+              "fps": 60,
+              "median": 16.700000000000728,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000291,
+              "longest": 16.80000000000291,
+              "over33": 0,
+              "intervals": 84
+            },
+            "webgl": {
+              "fps": 60,
+              "median": 16.700000000000728,
+              "p95": 16.799999999999272,
+              "p99": 16.80000000000291,
+              "longest": 16.80000000000291,
+              "over33": 0,
+              "intervals": 84
+            },
+            "drawFrames": 85,
+            "drawCalls": 1275,
+            "drawsPerFrame": 15,
+            "longTasks": [],
+            "heap": 21135769,
+            "canvasWidth": 768,
+            "dpr": 1,
+            "actionMs": null
+          }
+        ]
+      }
+    }
+  ],
+  "memory": [],
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Pro, Unspecified Version)"
+}

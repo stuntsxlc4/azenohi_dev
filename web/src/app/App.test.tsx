@@ -49,3 +49,20 @@ it('renders and operates the independent Journey timeline', async () => {
   expect(last).toHaveAttribute('aria-pressed', 'false');
   window.history.replaceState(null, '', '/');
 });
+
+it('restores a saved catalogue card and safely replaces an outgoing route', async () => {
+  window.history.replaceState({ projectReturn: { id: 'card-captrace', top: 72 } }, '', '/projects');
+  const user = userEvent.setup();
+  const { container } = render(<App />);
+  expect(document.getElementById('card-captrace')).toHaveFocus();
+  expect(container.querySelector('.route-content:not([inert])')?.scrollTop).toBe(72);
+  await user.keyboard('{Enter}');
+  expect(container.querySelector('.route-content:not([inert]) h1')).toHaveFocus();
+  expect(document.title).toBe('AzenoHI.dev — CapTrace');
+  await user.click(screen.getByRole('link', { name: 'Team' }));
+  await user.click(screen.getByRole('link', { name: 'Journey' }));
+  expect(container.querySelector('.route-content:not([inert]) h1')).toHaveFocus();
+  expect(container.querySelectorAll('.route-content:not([inert])')).toHaveLength(1);
+  expect(container.querySelector('[data-outgoing]')).toBeNull();
+  window.history.replaceState(null, '', '/');
+});

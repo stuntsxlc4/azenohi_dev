@@ -1,0 +1,13 @@
+{
+  "codec": "h264",
+  "width": 1920,
+  "height": 1080,
+  "duration": 48.914688,
+  "decodedFrames": 2797,
+  "meanCapturedFps": 57.181188603308684,
+  "medianIntervalMs": 16.99999999999946,
+  "longestCaptureIntervalMs": 2299.9999999999973,
+  "minimumSampledLuma": 17.47,
+  "maximumSampledLuma": 42.66,
+  "monotonicTimestamps": true
+}

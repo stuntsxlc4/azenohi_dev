@@ -17,10 +17,8 @@
 }
 .scene-projects .home-header {
   background: linear-gradient(#060914eb, transparent);
-  inset-inline: 0;
-  padding-inline: max(var(--page-gutter), calc((100% - var(--content-limit)) / 2));
 }
-.scene-projects .route-content {
+.scene-shell .portfolio-content {
   position: absolute;
   inset: var(--header-height) 0 0;
   height: auto;
@@ -74,8 +72,8 @@ main.projects-page {
   background:
     radial-gradient(ellipse at 98% 94%, var(--tint), transparent 65%), var(--project-surface);
   transition:
-    transform 0.2s,
-    border-color 0.2s;
+    transform var(--duration-fast) var(--easing-enter),
+    border-color var(--duration-fast) var(--easing-standard);
 }
 .project-card.done,
 .project-card.productivity-suite {
@@ -105,8 +103,8 @@ main.projects-page {
   mask-image: linear-gradient(to right, transparent, #0008 14%, #000 36%);
   mix-blend-mode: screen;
   transition:
-    transform 0.22s,
-    filter 0.22s;
+    transform var(--duration-fast) var(--easing-enter),
+    filter var(--duration-fast) var(--easing-standard);
 }
 .card-copy {
   position: relative;
@@ -169,11 +167,11 @@ main.projects-page {
   font-weight: 400;
   font-size: 1.4em;
   line-height: 1;
-  transition: transform 0.2s;
+  transition: transform var(--duration-fast) var(--easing-enter);
 }
 @media (hover: hover) {
   .project-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(var(--hover-offset));
     border-color: var(--steel);
   }
   .project-card:hover .project-art {
@@ -368,7 +366,7 @@ main.projects-page {
   }
 }
 @media (max-width: 620px) {
-  .scene-projects .route-content {
+  .scene-shell .portfolio-content {
     inset-block-start: 105px;
   }
   .projects-grid {

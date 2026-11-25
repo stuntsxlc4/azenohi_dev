@@ -1,0 +1,52 @@
+[
+  {
+    "route": "/",
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/team",
+    "violations": [],
+    "passes": 36
+  },
+  {
+    "route": "/projects",
+    "violations": [],
+    "passes": 29
+  },
+  {
+    "route": "/projects/captrace",
+    "violations": [],
+    "passes": 30
+  },
+  {
+    "route": "/projects/done",
+    "violations": [],
+    "passes": 30
+  },
+  {
+    "route": "/projects/privymeet",
+    "violations": [],
+    "passes": 30
+  },
+  {
+    "route": "/projects/productivity-suite",
+    "violations": [],
+    "passes": 30
+  },
+  {
+    "route": "/projects/risktrace-control-tower",
+    "violations": [],
+    "passes": 30
+  },
+  {
+    "route": "/projects/risk-miner",
+    "violations": [],
+    "passes": 32
+  },
+  {
+    "route": "/journey",
+    "violations": [],
+    "passes": 34
+  }
+]

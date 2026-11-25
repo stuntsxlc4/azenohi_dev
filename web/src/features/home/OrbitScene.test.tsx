@@ -13,6 +13,7 @@ const lifecycle = vi.hoisted(() => ({
   camera: { position: { x: 0, y: 0, z: 10, set: vi.fn<() => void>() } },
   invalidate: () => {},
   canvasDpr: vi.fn<(value: number) => void>(),
+  canvasLoop: vi.fn<(value: string) => void>(),
 }));
 const canvas = document.createElement('canvas');
 const nodes = { Rotor: new Group(), Spindle: new Group() };
@@ -32,12 +33,15 @@ vi.mock('@react-three/fiber', () => ({
     onCreated,
     children,
     dpr,
+    frameloop,
   }: {
     onCreated: (state: { gl: { domElement: HTMLCanvasElement } }) => void;
     children: ReactNode;
     dpr: number;
+    frameloop: string;
   }) => {
     lifecycle.canvasDpr(dpr);
+    lifecycle.canvasLoop(frameloop);
     lifecycle.viewport.dpr = dpr;
     useEffect(() => {
       onCreated({ gl: { domElement: canvas } });
@@ -136,4 +140,90 @@ it('reframes the mounted, paused scene for desktop and portrait Projects', async
   expect(container.querySelector('[name="station-carrier"]')).toBe(station);
   lifecycle.viewport.width = 16;
   history.replaceState(null, '', '/');
+});
+
+it('retains the ring phase and paused demand mode across Journey', async () => {
+  vi.stubGlobal('WebGL2RenderingContext', Object);
+  vi.stubGlobal('matchMedia', () => Object.assign(new EventTarget(), { matches: true }));
+  const { container } = render(<App />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Play animation' }));
+  const scene = screen.getByTestId('scene');
+  const ring = container.querySelector('[name="habitat-ring"]');
+  const carrier = container.querySelector('[name="station-carrier"]');
+  const rotation = { z: 0 };
+  Object.defineProperty(ring, 'rotation', { value: rotation });
+  Object.defineProperties(carrier, {
+    position: { value: { y: 0 } },
+    rotation: { value: { z: 0 } },
+  });
+  lifecycle.frame(lifecycle, 0.5);
+  const phase = rotation.z;
+  expect(phase).toBeCloseTo(-0.028);
+  fireEvent.click(screen.getByRole('button', { name: 'Pause animation' }));
+  fireEvent.click(screen.getByRole('link', { name: 'Journey' }));
+  expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('never');
+  lifecycle.frame(lifecycle, 0.5);
+  expect(rotation.z).toBe(phase);
+  fireEvent.click(screen.getByRole('link', { name: 'Home' }));
+  expect(screen.getByTestId('scene')).toBe(scene);
+  expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('demand');
+  lifecycle.frame(lifecycle, 0.5);
+  expect(rotation.z).toBe(phase);
+  fireEvent.click(screen.getByRole('button', { name: 'Play animation' }));
+  lifecycle.frame(lifecycle, 0.5);
+  expect(rotation.z).toBeCloseTo(phase - 0.028);
+});
+
+it('covers the running orbit after the fade and suspends it when the tab is hidden', async () => {
+  vi.stubGlobal('WebGL2RenderingContext', Object);
+  vi.stubGlobal('matchMedia', () => Object.assign(new EventTarget(), { matches: false }));
+  const hidden = vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
+  const { container } = render(<App />);
+  await screen.findByRole('button', { name: 'Pause animation' });
+  const shell = container.querySelector<HTMLDivElement>('.scene-shell')!;
+  const orbit = container.querySelector('.orbital-view');
+  shell.style.setProperty('--duration-cinematic', '900ms');
+  fireEvent.pointerMove(shell, { pointerType: 'mouse', clientX: 20, clientY: 10 });
+  expect(shell.style.getPropertyValue('--drift-x')).not.toBe('');
+  fireEvent.pointerLeave(shell);
+  expect(shell.style.getPropertyValue('--drift-x')).toBe('');
+  vi.useFakeTimers();
+  try {
+    fireEvent.click(screen.getByRole('link', { name: 'Journey' }));
+    expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('always');
+    expect(orbit).toHaveAttribute('data-covered', 'false');
+    fireEvent.click(screen.getByRole('link', { name: 'Team' }));
+    act(() => {
+      vi.advanceTimersByTime(900);
+    });
+    expect(orbit).toHaveAttribute('data-covered', 'false');
+    fireEvent.click(screen.getByRole('link', { name: 'Journey' }));
+    act(() => {
+      vi.advanceTimersByTime(900);
+    });
+    expect(orbit).toHaveAttribute('data-covered', 'true');
+    expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('never');
+    fireEvent.click(screen.getByRole('link', { name: 'Home' }));
+    expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('always');
+    hidden.mockReturnValue(true);
+    fireEvent(document, new Event('visibilitychange'));
+    expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('never');
+    hidden.mockReturnValue(false);
+    fireEvent(document, new Event('visibilitychange'));
+    expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('always');
+
+    const ring = container.querySelector('[name="habitat-ring"]');
+    const carrier = container.querySelector('[name="station-carrier"]');
+    Object.defineProperty(ring, 'rotation', { value: { z: 0 } });
+    Object.defineProperties(carrier, {
+      position: { value: { y: 0 } },
+      rotation: { value: { z: 0 } },
+    });
+    lifecycle.frame(lifecycle, 0.01);
+    fireEvent.click(screen.getByRole('button', { name: 'Pause animation' }));
+    lifecycle.frame(lifecycle, 0.01);
+    expect(lifecycle.canvasLoop).toHaveBeenLastCalledWith('demand');
+  } finally {
+    vi.useRealTimers();
+  }
 });

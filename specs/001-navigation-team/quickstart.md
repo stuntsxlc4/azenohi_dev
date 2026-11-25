@@ -1,0 +1,3 @@
+# Validation
+
+Run make web-check, make e2e and local pre-commit using the repository environment. Start localhost:8080 with the existing Vite command. Use .agents/bin/playwright-cli to inspect 1920×1080, 2560×1440, 1440×900, 768×1024 and 390×844. Capture Home and Team at each viewport. Verify Canvas node identity across ten transitions, document continuity, Back/Forward, direct entry, reload, focus, reduced motion and Pause/Play. Sample actual rendered frame counts after warmup and report environment and DPR. Attempt a short transition video. Verify all twelve portraits and technology icons load, demo labeling is visible and desktop uses six columns. Record results in verification.md.

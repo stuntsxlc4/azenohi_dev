@@ -10,6 +10,8 @@ const lifecycle = vi.hoisted(() => ({
   viewport: { width: 16, height: 9, dpr: 2 },
   size: { width: 1440 },
   gl: { capabilities: { maxTextureSize: 16384, getMaxAnisotropy: () => 16 } },
+  camera: { position: { x: 0, y: 0, z: 10, set: vi.fn<() => void>() } },
+  invalidate: () => {},
   canvasDpr: vi.fn<(value: number) => void>(),
 }));
 const canvas = document.createElement('canvas');
@@ -68,7 +70,7 @@ it('keeps the station still for reduced motion, budgets DPR and switches to the 
     rotation: { value: { z: 0 } },
   });
   const state = {
-    camera: { position: { x: 0, y: 0 } },
+    camera: { position: { x: 0, y: 0, z: 10, set: vi.fn<() => void>() } },
     viewport: lifecycle.viewport,
   };
   lifecycle.frame(state, 1);

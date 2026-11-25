@@ -30,20 +30,21 @@ test('renders accessible start navigation at the configured viewport', async ({
   await page.goto('/?source=navigation-test');
   await expect(page).toHaveTitle('AzenoHI.dev — Hybrid Intelligence');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hybrid Intelligence');
-  await expect(page.locator('nav [aria-disabled=true]')).toHaveCount(3);
+  await expect(page.locator('nav [aria-disabled=true]')).toHaveCount(2);
 
   const navigation = page.getByRole('navigation', { name: 'Main navigation' });
   const startLink = navigation.getByRole('link', { name: 'Home' });
-  await expect(navigation.getByRole('link')).toHaveCount(1);
-  await expect(startLink).toHaveAttribute('href', '/');
+  await expect(navigation.getByRole('link')).toHaveCount(2);
+  await expect(startLink).toHaveAttribute('href', '/?source=navigation-test');
   await expect(startLink).toHaveAttribute('aria-current', 'page');
   // WebKit on macOS uses Option-Tab to focus links by default.
   const focusNextLink =
     browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
+  await page.getByRole('link', { name: 'AzenoHI.dev home' }).focus();
   await page.keyboard.press(focusNextLink);
   await expect(startLink).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL('/');
+  await expect(page).toHaveURL('/?source=navigation-test');
 
   const viewport = await page.evaluate(() => ({
     content: document.documentElement.scrollWidth,

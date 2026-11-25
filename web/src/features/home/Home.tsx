@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router';
-import { RouteLock } from '../../app/SiteHeader';
 
 export function Home() {
   const { search } = useLocation();
@@ -14,9 +13,7 @@ export function Home() {
       </h1>
       <p className="home-tagline">People × AI</p>
       <div className="home-actions">
-        <button type="button" disabled>
-          Explore projects <RouteLock />
-        </button>
+        <Link to={`/projects${search}`}>Explore projects</Link>
         <Link to={`/team${search}`}>Meet the team</Link>
       </div>
     </main>

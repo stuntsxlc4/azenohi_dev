@@ -26,6 +26,13 @@ class SceneBoundary extends Component<
 export function SceneShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const team = pathname === '/team';
+  const view = pathname.startsWith('/projects') ? 'projects' : team ? 'team' : 'home';
+  const framing =
+    pathname === '/projects/risk-miner'
+      ? 'caseStudy'
+      : /^\/projects\/[^/]+/.test(pathname)
+        ? 'detail'
+        : view;
   const [moving, setMoving] = useState(() => !window.matchMedia?.(motionQuery).matches);
   const pointer = useRef({ x: 0, y: 0 });
   const [ready, setReady] = useState(false);
@@ -41,7 +48,7 @@ export function SceneShell({ children }: { children: ReactNode }) {
   const available = typeof WebGL2RenderingContext !== 'undefined' && !failed;
   return (
     <div
-      className={`home scene-shell ${team ? 'scene-team' : 'scene-home'}`}
+      className={`home scene-shell scene-${view}`}
       onPointerMove={(event) => {
         if (!moving || event.pointerType === 'touch') return;
         const rect = event.currentTarget.getBoundingClientRect();
@@ -63,7 +70,7 @@ export function SceneShell({ children }: { children: ReactNode }) {
           <SceneBoundary onFailure={showPoster}>
             <Suspense fallback={null}>
               <OrbitScene
-                view={team ? 'team' : 'home'}
+                view={framing}
                 moving={moving}
                 pointer={pointer}
                 onReady={showScene}
@@ -73,7 +80,7 @@ export function SceneShell({ children }: { children: ReactNode }) {
           </SceneBoundary>
         )}
       </div>
-      {!team && <div className="home-foreground" aria-hidden="true" />}
+      {view === 'home' && <div className="home-foreground" aria-hidden="true" />}
       <SiteHeader path={pathname} />
       {children}
       <div className="home-foot">

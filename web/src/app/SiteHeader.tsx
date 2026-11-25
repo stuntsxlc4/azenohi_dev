@@ -19,12 +19,16 @@ export function SiteHeader({ path }: { path: string }) {
         <Link to={`/team${search}`} aria-current={path === '/team' ? 'page' : undefined}>
           Team
         </Link>
-        {['Projects', 'Journey'].map((label) => (
-          <span key={label} aria-disabled="true" title={`${label} is not available yet`}>
-            {label}
-            <RouteLock />
-          </span>
-        ))}
+        <Link
+          to={`/projects${search}`}
+          aria-current={/^\/projects(?:\/|$)/.test(path) ? 'page' : undefined}
+        >
+          Projects
+        </Link>
+        <span aria-disabled="true" title="Journey is not available yet">
+          Journey
+          <RouteLock />
+        </span>
       </nav>
     </header>
   );

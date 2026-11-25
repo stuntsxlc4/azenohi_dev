@@ -1,0 +1,163 @@
+{
+  "provenance": "User-provided 04B, Journey and Stage 06 verification reports; transcribed summary, not original raw instrumentation.",
+  "stage_06_branch": "codex/cinematic-transitions",
+  "baseline_commit": "5e48ff8",
+  "test_environment": {
+    "machine": "MacBook Pro M3 Pro, 18 GB",
+    "browser": "Chrome 158.0.8127.38",
+    "renderer": "ANGLE Metal Renderer: Apple M3 Pro",
+    "viewport_type": "browser emulation",
+    "steady_samples": 3,
+    "warmup_seconds": 8,
+    "steady_window_seconds": 1.4,
+    "transition_window_seconds": 1.45
+  },
+  "fixed_viewport_benchmark": [
+    {
+      "viewport": "2560x1440",
+      "dpr": 1,
+      "home_fps_before": 60.0,
+      "home_fps_after": 60.0,
+      "home_p99_ms_before": 16.8,
+      "home_p99_ms_after": 16.8,
+      "return_raf_max_ms_before": 16.7,
+      "return_raf_max_ms_after": 16.8
+    },
+    {
+      "viewport": "1920x1080",
+      "dpr": 1,
+      "home_fps_before": 60.0,
+      "home_fps_after": 60.0,
+      "home_p99_ms_before": 16.8,
+      "home_p99_ms_after": 16.8,
+      "return_raf_max_ms_before": 16.7,
+      "return_raf_max_ms_after": 16.8
+    },
+    {
+      "viewport": "1440x900",
+      "dpr": 1,
+      "home_fps_before": 60.0,
+      "home_fps_after": 60.0,
+      "home_p99_ms_before": 16.8,
+      "home_p99_ms_after": 16.8,
+      "return_raf_max_ms_before": 16.8,
+      "return_raf_max_ms_after": 16.8
+    },
+    {
+      "viewport": "1440x900",
+      "dpr": 2,
+      "home_fps_before": 60.0,
+      "home_fps_after": 60.0,
+      "home_p99_ms_before": 16.8,
+      "home_p99_ms_after": 16.8,
+      "return_raf_max_ms_before": 16.7,
+      "return_raf_max_ms_after": 16.8
+    },
+    {
+      "viewport": "768x1024",
+      "dpr": 1,
+      "home_fps_before": 60.0,
+      "home_fps_after": 60.0,
+      "home_p99_ms_before": 16.8,
+      "home_p99_ms_after": 16.8,
+      "return_raf_max_ms_before": 416.7,
+      "return_raf_max_ms_after": 16.8
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 2,
+      "home_fps_before": 60.0,
+      "home_fps_after": 60.0,
+      "home_p99_ms_before": 16.8,
+      "home_p99_ms_after": 16.8,
+      "return_raf_max_ms_before": 283.3,
+      "return_raf_max_ms_after": 16.8
+    }
+  ],
+  "resource_samples": [
+    {
+      "cycle": 0,
+      "cumulative_context_creations_before": 1,
+      "cumulative_context_creations_after": 1,
+      "canvas_after": 1,
+      "js_listeners_before": 187,
+      "js_listeners_after": 188,
+      "js_heap_mib_before": 7.3,
+      "js_heap_mib_after": 7.29
+    },
+    {
+      "cycle": 5,
+      "cumulative_context_creations_before": 6,
+      "cumulative_context_creations_after": 1,
+      "canvas_after": 1,
+      "js_listeners_before": 365,
+      "js_listeners_after": 242,
+      "js_heap_mib_before": 10.45,
+      "js_heap_mib_after": 9.54
+    },
+    {
+      "cycle": 10,
+      "cumulative_context_creations_before": 11,
+      "cumulative_context_creations_after": 1,
+      "canvas_after": 1,
+      "js_listeners_before": 530,
+      "js_listeners_after": 242,
+      "js_heap_mib_before": 12.1,
+      "js_heap_mib_after": 9.7
+    },
+    {
+      "cycle": 15,
+      "cumulative_context_creations_before": 16,
+      "cumulative_context_creations_after": 1,
+      "canvas_after": 1,
+      "js_listeners_before": 695,
+      "js_listeners_after": 216,
+      "js_heap_mib_before": 13.16,
+      "js_heap_mib_after": 9.78
+    },
+    {
+      "cycle": 20,
+      "cumulative_context_creations_before": 21,
+      "cumulative_context_creations_after": 1,
+      "canvas_after": 1,
+      "js_listeners_before": 860,
+      "js_listeners_after": 216,
+      "js_heap_mib_before": 14.21,
+      "js_heap_mib_after": 9.99
+    }
+  ],
+  "frontend_quality": [
+    {
+      "stage": "04B",
+      "unit_tests_passed": 48,
+      "line_coverage_pct": 95.41,
+      "branch_coverage_pct": 91.84
+    },
+    {
+      "stage": "05",
+      "unit_tests_passed": 49,
+      "line_coverage_pct": 95.32,
+      "branch_coverage_pct": 91.84
+    },
+    {
+      "stage": "06",
+      "unit_tests_passed": 52,
+      "line_coverage_pct": 97.09,
+      "branch_coverage_pct": 94.15,
+      "e2e_passed": 30,
+      "local_hooks_passed": 12,
+      "axe_routes_checked": 10,
+      "axe_violations": 0
+    }
+  ],
+  "known_outlier": {
+    "viewport": "768x1024",
+    "catalogue_interval_ms": 299.9,
+    "isolated_repeats_longest_interval_ms": [
+      16.8,
+      16.8,
+      16.8
+    ],
+    "cause": "unresolved"
+  }
+}

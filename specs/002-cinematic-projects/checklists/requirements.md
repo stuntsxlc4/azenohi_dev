@@ -1,0 +1,1 @@
+- [x] All three scenarios have measurable acceptance criteria and scoped data sources.

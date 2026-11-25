@@ -8,6 +8,10 @@
     {
       "source": "/team",
       "destination": "/index.html"
+    },
+    {
+      "source": "/projects/:path*",
+      "destination": "/index.html"
     }
   ]
 }

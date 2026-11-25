@@ -3,16 +3,31 @@ import { Environment, Lightformer } from '@react-three/drei';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { ACESFilmicToneMapping, MathUtils, SRGBColorSpace } from 'three';
-import type { Group } from 'three';
+import { Group } from 'three';
 import { Planet } from './Planet';
 import { Station } from './Station';
 import { getEarthQuality } from './earthQuality';
 
 interface MotionProps {
-  view?: 'home' | 'team';
+  view?: 'home' | 'team' | 'projects' | 'detail' | 'caseStudy';
   moving: boolean;
   pointer: RefObject<{ x: number; y: number }>;
 }
+
+const landscapeFrames = {
+  home: { cameraY: 0, stationX: 0.34, stationY: 0.24, scale: 0.25 },
+  team: { cameraY: -0.17, stationX: 0.31, stationY: 0.14, scale: 0.18 },
+  projects: { cameraY: -0.17, stationX: 0.33, stationY: 0.11, scale: 0.18 },
+  detail: { cameraY: -0.13, stationX: 0.35, stationY: 0.16, scale: 0.17 },
+  caseStudy: { cameraY: -0.15, stationX: 0.43, stationY: 0.19, scale: 0.09 },
+};
+const portraitFrames: typeof landscapeFrames = {
+  home: { cameraY: 0, stationX: 0.19, stationY: 0.235, scale: 0.29 },
+  team: { cameraY: -0.29, stationX: 0.28, stationY: -0.058, scale: 0.065 },
+  projects: { cameraY: -0.3, stationX: 0.3, stationY: -0.1, scale: 0.075 },
+  detail: { cameraY: -0.22, stationX: 0.28, stationY: 0.03, scale: 0.065 },
+  caseStudy: { cameraY: -0.22, stationX: 0.36, stationY: 0.1, scale: 0.045 },
+};
 
 // A static reflection capture gives the hull warm sunward and cool Earth-facing highlights.
 function ReflectedLight() {
@@ -81,15 +96,32 @@ function Orbit({
   const portrait = width < height;
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
-  const routeY = view === 'team' ? height * 0.04 : 0;
+  // Normalized placements keep the original orbital animation independent of route framing.
+  const frames = portrait ? portraitFrames : landscapeFrames;
+  const frame = frames[view];
+  const routeY = height * frame.cameraY;
+  const stationX = width * frame.stationX;
+  const stationY = height * frame.stationY;
+  const stationSize = Math.min(width * (portrait ? 0.18 : 0.154), height * frame.scale);
+  const [mount] = useState(() => new Group());
+  const placed = useRef(false);
   useLayoutEffect(() => {
-    if (!moving) {
+    if (!placed.current || !moving) {
+      mount.position.set(stationX, stationY, 1);
+      mount.scale.setScalar(stationSize);
       camera.position.set(0, routeY, camera.position.z);
+      placed.current = true;
       invalidate();
     }
-  }, [camera, invalidate, moving, routeY]);
+  }, [camera, invalidate, mount, moving, routeY, stationX, stationY, stationSize]);
   useFrame((state, delta) => {
     if (!moving || !ring.current || !station.current) return;
+    mount.position.set(
+      MathUtils.damp(mount.position.x, stationX, 6, delta),
+      MathUtils.damp(mount.position.y, stationY, 6, delta),
+      1,
+    );
+    mount.scale.setScalar(MathUtils.damp(mount.scale.x, stationSize, 6, delta));
     flightTime.current += delta;
     if (flightTime.current > 8 && !document.hidden) {
       const metrics = frameMetrics.current;
@@ -152,14 +184,11 @@ function Orbit({
       <hemisphereLight args={['#a4bbd0', '#526b84', 0.38]} />
       <directionalLight position={[-5, 1, 1.2]} intensity={2.55} color="#ffb88e" />
       <directionalLight position={[1, 2, -4]} intensity={1.55} color="#a0bdd7" />
-      <group
-        position={[width * (portrait ? 0.19 : 0.31), height * (portrait ? 0.235 : 0.258), 1]}
-        scale={Math.min(width * (portrait ? 0.18 : 0.154), height * 0.29)}
-      >
+      <primitive object={mount}>
         <group ref={station} name="station-carrier">
           <Station ring={ring} />
         </group>
-      </group>
+      </primitive>
     </>
   );
 }

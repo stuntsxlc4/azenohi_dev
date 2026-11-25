@@ -118,3 +118,22 @@ it('keeps the declared mobile buffer capped from startup through readiness and m
   expect(lifecycle.canvasDpr.mock.calls.length).toBeGreaterThan(1);
   expect(new Set(lifecycle.canvasDpr.mock.calls.flat())).toEqual(new Set([1.5]));
 });
+
+it('reframes the mounted, paused scene for desktop and portrait Projects', async () => {
+  vi.stubGlobal('WebGL2RenderingContext', Object);
+  vi.stubGlobal('matchMedia', () => Object.assign(new EventTarget(), { matches: true }));
+  lifecycle.viewport.width = 16;
+  lifecycle.viewport.height = 9;
+  const { container } = render(<App />);
+  await screen.findByRole('button', { name: 'Play animation' });
+  const station = container.querySelector('[name="station-carrier"]');
+  fireEvent.click(screen.getByRole('link', { name: 'Explore projects' }));
+  expect(lifecycle.camera.position.set).toHaveBeenLastCalledWith(0, -9 * 0.17, 10);
+  lifecycle.viewport.width = 5;
+  fireEvent.click(screen.getByRole('link', { name: 'Team' }));
+  fireEvent.click(screen.getByRole('link', { name: 'Projects' }));
+  expect(lifecycle.camera.position.set).toHaveBeenLastCalledWith(0, -9 * 0.3, 10);
+  expect(container.querySelector('[name="station-carrier"]')).toBe(station);
+  lifecycle.viewport.width = 16;
+  history.replaceState(null, '', '/');
+});

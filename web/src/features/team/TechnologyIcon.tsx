@@ -9,12 +9,14 @@ const logos: Record<string, string> = {
   Docker: 'docker',
   Kubernetes: 'kubernetes',
   AWS: 'aws',
+  GCP: 'googlecloud',
   Git: 'git',
   'GitHub Actions': 'githubactions',
   Pandas: 'pandas',
 };
 const concepts: Record<string, string> = {
   Cybersecurity: 'M12 2 21 6v6c0 5-9 10-9 10S3 17 3 12V6Zm-5 10 3 3 7-7',
+  AI: 'M4 4h16v16H4zM8 16l2.5-8L13 16M9 13h3M16 8v8M8 1v3m8-3v3M8 20v3m8-3v3M1 8h3m-3 8h3m16-8h3m-3 8h3',
   Cloud: 'M6 18a4 4 0 0 1-1-8 7 7 0 0 1 13-1 5 5 0 0 1 0 9Z',
   SQL: 'M4 6c0-5 16-5 16 0s-16 5-16 0v12c0 5 16 5 16 0V6M4 12c0 5 16 5 16 0',
 };

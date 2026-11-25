@@ -57,13 +57,13 @@
   --type-label: 700 clamp(0.875rem, 1.27vw, 1.5rem)/1.2 var(--font-ui);
   --type-body: 400 1rem/1.5 var(--font-ui);
   --type-support: 650 clamp(1.125rem, 1.72vw, 2rem)/1.35 var(--font-ui);
-  --type-nav: 550 clamp(1rem, 1.45vw, 1.5625rem)/1.25 var(--font-ui);
+  --type-nav: 400 clamp(1rem, 1.28vw, 1.5rem)/1.25 var(--font-ui);
   --type-action: 600 clamp(0.875rem, 1.14vw, 1.375rem)/1.25 var(--font-ui);
   --tracking-display: -0.032em;
   --tracking-label: 0.46em;
 
-  --page-gutter: clamp(1rem, 5.4vw, 8rem);
-  --content-limit: 112rem;
+  --page-gutter: clamp(1rem, 5.2vw, 9rem);
+  --content-limit: 160rem;
   --header-height: clamp(4.625rem, 10.5svh, 6.875rem);
   --space-small: 0.5rem;
   --space-medium: 1rem;
@@ -78,4 +78,35 @@
   --electric-blue: #387bff;
   --deep-burgundy: #480d20;
   --text-muted: #858da3;
+}
+:root {
+  --project-surface: #101322;
+  --project-border: #393344;
+  --award-gold: #f9d65c;
+  --award-bronze: #ffc29d;
+}
+
+:root {
+  --panel-radius: clamp(15px, 1.05vw, 20px);
+  --panel-gap: clamp(14px, 1.35vw, 28px);
+  --panel-outline: 1px solid var(--project-border);
+  --tech-icon-size: clamp(20px, 1.25vw, 26px);
+  --panel-ink: #090c18;
+  --scene-floor: linear-gradient(
+    180deg,
+    transparent 19%,
+    #07102042 34%,
+    #070c18ec 52%,
+    #090c17 80%
+  );
+  --scene-corners:
+    radial-gradient(ellipse at 0 104%, #a40a36a1, transparent 21%),
+    radial-gradient(ellipse at 105% 103%, #66102ca6, transparent 22%);
+  --scene-slash: linear-gradient(
+    134deg,
+    transparent 40%,
+    #820d2955 40.3%,
+    #cd163c9c 53%,
+    transparent 53.2%
+  );
 }

@@ -161,9 +161,10 @@ export function SceneShell({
             type="button"
             onClick={() => setMotionChoice(!moving)}
             aria-label={moving ? 'Pause animation' : 'Play animation'}
+            title={moving ? 'Pause animation' : 'Play animation'}
           >
             <i className={moving ? 'pause' : 'play'} aria-hidden="true" />
-            {moving ? 'Pause' : 'Play'}
+            {view !== 'home' && (moving ? 'Pause' : 'Play')}
           </button>
         )}
       </div>

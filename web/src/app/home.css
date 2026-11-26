@@ -37,6 +37,9 @@ body:has(.home) {
   z-index: -2;
   background: url('/home/orbit-desktop.webp') center/100% 100% no-repeat;
 }
+.scene-home .orbital-view[data-rendered='false'] {
+  background-image: url('/home/horizon-desktop.webp');
+}
 .orbital-view[data-rendered='true'] {
   background: none;
 }
@@ -90,6 +93,20 @@ body:has(.home) {
   font: var(--type-nav);
   letter-spacing: 0;
 }
+.scene-home[data-environment='orbit'] .home-header nav {
+  gap: clamp(20px, 4.8vw, 88px);
+}
+.scene-home[data-environment='orbit'] .home-header nav a {
+  font-size: clamp(1rem, 1.46vw, 1.8rem);
+}
+.scene-home[data-environment='orbit'] .home-header nav a::after {
+  inset-inline: -0.6em;
+  bottom: -0.2em;
+  transform: scaleX(0.45);
+}
+.scene-home[data-environment='orbit'] .home-header nav a[aria-current='page']::after {
+  transform: scaleX(1);
+}
 .home-header nav span {
   color: var(--text-secondary);
   cursor: not-allowed;
@@ -127,7 +144,8 @@ body:has(.home) {
 main.home-content {
   position: absolute;
   inset-inline-start: max(var(--page-gutter), calc((100% - var(--content-limit)) / 2));
-  top: 17.5%;
+  top: max(20.4%, calc(var(--header-height) + 0.5rem));
+  padding-inline-start: 0.28vw;
   max-width: calc(100% - var(--page-gutter) * 2);
   margin: 0;
 }
@@ -141,6 +159,12 @@ main.home-content {
   text-transform: uppercase;
   margin-bottom: 4.45vh;
 }
+.home-content .heading-mark {
+  gap: 1.8vw;
+  margin-bottom: 4.85svh;
+  font-size: clamp(14px, 1.38vw, 26px);
+  letter-spacing: 0.49em;
+}
 .heading-mark:after {
   content: '';
   width: 15vw;
@@ -153,40 +177,14 @@ main.home-content {
   margin: 0;
   color: var(--text-primary);
 }
+.home-content h1 {
+  letter-spacing: -0.016em;
+}
 .home h1 span {
   display: block;
 }
 .home h1 em {
   color: var(--brand-accent);
-}
-.home-tagline {
-  color: var(--text-secondary);
-  font: var(--type-support);
-  text-shadow: var(--text-shadow);
-  margin: 2.5vh 0 3.8vh;
-}
-.home-actions {
-  display: flex;
-  gap: 2.1vw;
-  align-items: center;
-}
-.home-actions button:disabled {
-  opacity: 1;
-  cursor: not-allowed;
-  color: var(--text-primary);
-  font: var(--type-action);
-  min-height: var(--control-height);
-  display: inline-flex;
-  gap: 12px;
-  align-items: center;
-  border: 0;
-  background: transparent;
-  padding: 10px 0;
-}
-.home-actions button:first-child {
-  padding: 0.8em 1.5em;
-  background: var(--disabled-accent-surface);
-  border-radius: var(--control-radius);
 }
 .route-lock {
   position: relative;
@@ -235,6 +233,14 @@ main.home-content {
     600 12px Arial,
     sans-serif;
 }
+.scene-home .home-foot button {
+  width: var(--control-height);
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--space-black) 55%, transparent);
+  border-color: color-mix(in srgb, var(--text-primary) 42%, transparent);
+}
 .home-foot button:hover {
   background: var(--control-hover);
   border-color: var(--text-primary);
@@ -260,8 +266,11 @@ main.home-content {
   .orbital-view {
     background-image: url('/home/orbit-portrait.webp');
   }
+  .scene-home .orbital-view[data-rendered='false'] {
+    background-image: url('/home/horizon-portrait.webp');
+  }
   main.home-content {
-    top: 31%;
+    top: clamp(132px, 20.4svh, 240px);
   }
   .home h1 {
     font-size: clamp(46px, 10.3vw, 98px);
@@ -291,12 +300,30 @@ main.home-content {
   .heading-mark {
     margin-bottom: 15px;
   }
-  .home-actions {
-    flex-wrap: wrap;
-    gap: var(--space-small) var(--space-medium);
+  .scene-home[data-environment='orbit'] .home-header nav {
+    align-self: stretch;
+    justify-content: space-between;
+    gap: var(--space-small);
   }
-  .home-tagline {
-    margin: 16px 0 21px;
+  .scene-home[data-environment='orbit'] .home-header nav a {
+    font-size: 0.95rem;
+  }
+  .scene-home[data-environment='orbit'] .home-header nav a::after {
+    inset-inline: 0;
+    bottom: 0;
+  }
+  main.home-content {
+    top: max(7rem, 20.4svh);
+  }
+  .home-content .heading-mark {
+    gap: 1rem;
+    margin-bottom: 18px;
+  }
+  .home-content .heading-mark::after {
+    width: 19vw;
+  }
+  .home-content h1 {
+    font-size: clamp(40px, 11.8vw, 70px);
   }
 }
 
@@ -305,15 +332,52 @@ main.home-content {
   z-index: -1;
   inset: -0.65%;
   pointer-events: none;
-  background: url('/home/foreground.webp') center bottom / 100% 100% no-repeat;
-  filter: saturate(1.22) hue-rotate(-12deg);
+  background: url('/home/ridge.webp') 68% bottom / cover no-repeat;
   transform: translate3d(var(--drift-x, 0px), var(--drift-y, 0px), 0);
   transition: transform var(--duration-slow) var(--easing-enter);
 }
-@media (max-aspect-ratio: 1/1) {
+.home-foreground::before,
+.home-foreground::after {
+  content: '';
+  position: absolute;
+  transform: skewY(-40deg);
+  border-block: 1px solid #ff334c;
+  background: linear-gradient(180deg, #f00021cf, #94001691);
+}
+.home-foreground::before {
+  left: -1%;
+  bottom: 14%;
+  width: 16%;
+  height: 9%;
+  transform-origin: left bottom;
+  mask-image: linear-gradient(90deg, black 12%, transparent);
+}
+.home-foreground::after {
+  right: -1%;
+  top: 46%;
+  width: 35%;
+  height: 12%;
+  transform-origin: right top;
+  mask-image: linear-gradient(270deg, black 12%, transparent 94%);
+}
+@media (min-aspect-ratio: 16/9) {
   .home-foreground {
-    background-size: auto 60%;
-    background-position: 88% bottom;
+    /* Keep the figures at the horizon as the viewport grows wider. */
+    background-size: 100% auto;
+    background-position: center calc(41svh - 23.2vw);
+  }
+}
+@media (max-aspect-ratio: 1/1) {
+  .home-foreground::after {
+    top: 73%;
+    height: 5%;
+  }
+  .home-foreground::before {
+    height: 4%;
+  }
+  .home-foreground {
+    background-size: auto min(71svh, 140vw);
+    background-position: 77% bottom;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -322,19 +386,6 @@ main.home-content {
   }
 }
 
-.home-actions a {
-  color: var(--text-primary);
-  font: var(--type-action);
-  min-height: var(--control-height);
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 0;
-  text-decoration: none;
-}
-.home-actions a:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
-}
 .home-header nav {
   flex-wrap: wrap;
 }
@@ -379,17 +430,11 @@ h1[tabindex='-1']:focus {
     var(--scene-floor);
 }
 
-.scene-home .orbital-view::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.scene-home {
   background:
-    linear-gradient(90deg, #050a1766, transparent 58%),
-    linear-gradient(0deg, #090c1ac4, transparent 57%),
-    radial-gradient(ellipse at 56% 44%, #e942221f, transparent 28%);
+    radial-gradient(ellipse 71% 50% at 54% 65%, #7b3745 0%, #3b283a 44%, #141624 74%, transparent),
+    var(--sky-gradient);
 }
-
 .orbital-view[data-covered='true'] {
   visibility: hidden;
 }
@@ -423,14 +468,12 @@ h1[tabindex='-1']:focus {
   pointer-events: none;
 }
 
-.home-actions a,
 .home-foot button {
   transition:
     background-color var(--duration-fast) var(--easing-standard),
     border-color var(--duration-fast) var(--easing-standard),
     translate var(--duration-fast) var(--easing-enter);
 }
-.home-actions a:active,
 .home-foot button:active {
   translate: 0 1px;
 }
@@ -567,11 +610,9 @@ h1[tabindex='-1']:focus {
 @media (prefers-reduced-motion: reduce) {
   .home-header nav a,
   .home-header nav a::after,
-  .home-actions a,
   .home-foot button {
     transition: none;
   }
-  .home-actions a:active,
   .home-foot button:active {
     translate: none;
   }

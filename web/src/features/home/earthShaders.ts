@@ -161,3 +161,95 @@ void main() {
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
 }`;
+
+export const dawnSurfaceVertex = /* glsl */ `
+uniform mat3 restRotation;
+varying vec3 restNormal;
+varying vec3 radial;
+varying vec2 geography;
+void main() {
+  restNormal = restRotation * normal;
+  radial = normalize(mat3(modelMatrix) * normal);
+  geography = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
+}`;
+
+// Project the painted hemisphere in the initial camera pose. Its texture moves
+// with the globe; the broad illumination field remains locked to the sunrise.
+export const dawnSurfaceFragment = /* glsl */ `
+uniform vec4 globe;
+uniform vec3 polarAxis;
+uniform vec3 primeMeridian;
+uniform vec3 east;
+uniform sampler2D dawnMap;
+uniform sampler2D lightsMap;
+varying vec3 restNormal;
+varying vec3 radial;
+varying vec2 geography;
+
+float limbAt(float x) {
+  float dx = (x - globe.x) / globe.z;
+  return globe.y + globe.z * globe.w * sqrt(max(0., 1. - dx*dx));
+}
+
+// Extend the finite artwork along the curvature of the horizon. Folding the
+// distance below the limb keeps sky and sun out of distant terrain samples.
+float limbDepth(vec3 n) {
+  return max(0., limbAt(globe.x + globe.z*n.x) - (globe.y + globe.z*globe.w*n.y));
+}
+vec2 sourceUV(vec3 n, float viewDepth) {
+  float x = globe.x + globe.z*n.x;
+  float foldedX = 1. - abs(mod(x,2.) - 1.);
+  // A grazing-angle photograph has no resolved detail perpendicular to its
+  // limb. Bound that component of re-projection so it cannot stretch one
+  // bright horizon texel across a newly visible swath of the hemisphere.
+  float depth = clamp(limbDepth(n), .86*viewDepth, 1.14*viewDepth);
+  float height = max(.01,limbAt(foldedX));
+  float v = height - depth;
+  if (v < 0.) v = .72*height * (1. - abs(mod(-v/(.72*height),2.)-1.));
+  return vec2(foldedX, v);
+}
+vec3 detailAt(vec3 n, float viewDepth, vec3 illumination, float lod) {
+  vec2 uv = sourceUV(n, viewDepth);
+  vec3 painted = textureLod(dawnMap,uv,lod).rgb;
+  vec3 localLight = textureLod(dawnMap,uv,5.5).rgb;
+  return max(vec3(0.), (painted + .008)*(illumination + .008)/(localLight + .008) - .008);
+}
+
+void main() {
+  vec3 here = normalize(radial);
+  vec3 rest = normalize(restNormal);
+  float viewDepth = limbDepth(here);
+  vec2 fixedUV = sourceUV(here, viewDepth);
+  vec2 texel = fixedUV*vec2(textureSize(dawnMap,0));
+  vec2 dx = dFdx(texel), dy = dFdy(texel);
+  float lod = .5*log2(max(1.,max(dot(dx,dx),dot(dy,dy))));
+  vec3 illumination = textureLod(dawnMap,fixedUV,5.5).rgb;
+
+  // Five overlapping longitudinal sectors extend the painted surface around
+  // the full sphere. Neighbouring sectors share latitude and rotate together.
+  const float sector = 6.28318530718 / 5.;
+  const float firstLongitude = -1.04;
+  float latitude = dot(rest,polarAxis);
+  float circle = sqrt(max(0.,1.-latitude*latitude));
+  float longitude = atan(dot(rest,east),dot(rest,primeMeridian));
+  float phase = mod(longitude-firstLongitude,sector);
+  float a = firstLongitude + phase;
+  vec3 parallel = polarAxis*latitude;
+  vec3 sampled = parallel + circle*(cos(a)*primeMeridian + sin(a)*east);
+  vec3 terrain = detailAt(sampled, viewDepth, illumination, lod);
+  if (phase > sector - .11) {
+    float b = a - sector;
+    vec3 neighbour = parallel + circle*(cos(b)*primeMeridian + sin(b)*east);
+    terrain = mix(terrain,detailAt(neighbour, viewDepth, illumination, lod),smoothstep(sector-.11,sector,phase));
+  }
+  // Keep the very narrow optical fringe and the sun's reflection stationary.
+  // The transition spans only the first few pixels inside the planet.
+  float interior = smoothstep(.026,.077,here.z);
+  vec3 color = mix(texture2D(dawnMap,fixedUV).rgb, terrain, interior);
+  // In extrapolated longitudes, measured city emissions break up repetition.
+  float extension = smoothstep(0.,.3,max(firstLongitude-longitude,longitude-firstLongitude-sector));
+  color += extension * .10 * pow(texture2D(lightsMap,geography).r,1.7) * vec3(1.,.26,.07);
+  gl_FragColor = vec4(color,1.);
+  #include <colorspace_fragment>
+}`;

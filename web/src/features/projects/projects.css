@@ -1,8 +1,3 @@
-.home-actions a:first-child {
-  background: var(--crimson);
-  padding-inline: 1.45em;
-  border-radius: var(--control-radius);
-}
 .scene-projects::after {
   content: '';
   position: absolute;

@@ -50,7 +50,7 @@ The project is built on a fork of the [Risk Engine application starter](https://
 - Real-time, textured 3D Earth with surface detail, clouds, atmosphere and lighting.
 - Animated orbital station, including its rotating ring and independent movement.
 - Cinematic camera framing, layered foreground and controlled parallax.
-- Navigation to Team and Projects through the main calls to action.
+- Header navigation to Team, Projects and Journey.
 - Pause/Play, reduced-motion support and a fallback for unavailable WebGL.
 
 ### 02 — Team: People × AI

@@ -43,3 +43,6 @@ https://ebruneton.github.io/precomputed_atmospheric_scattering/
 NASA astronaut photograph ISS070-E-1178 provided the visual reference for
 the cool stratosphere above the warm, low-altitude sunrise:
 https://science.nasa.gov/earth/earth-observatory/sunrise-from-the-station-152259/
+
+orbital-dawn.webp uses the supplied Home art. The exposed Earth and sky come from
+the reference, with ImageGen reconstruction behind the original foreground and UI.

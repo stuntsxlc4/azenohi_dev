@@ -75,3 +75,55 @@ export function EarthAtmosphere({ segments, sunDirection, lookup }: AtmospherePr
     </mesh>
   );
 }
+
+const skyVertex = /* glsl */ `
+uniform vec4 artFrame;
+varying vec2 artUV;
+void main() {
+  // The orbital camera is orthographic. Reconstruct world XY on its far plane
+  // so resizing or camera parallax moves the sky and atmospheric edge together.
+  vec2 cameraXY = (position.xy - projectionMatrix[3].xy) /
+    vec2(projectionMatrix[0][0], projectionMatrix[1][1]);
+  artUV = (cameraXY + cameraPosition.xy - artFrame.xy) / artFrame.zw + 0.5;
+  gl_Position = vec4(position.xy, 1., 1.);
+}`;
+
+const skyFragment = /* glsl */ `
+uniform sampler2D dawn;
+varying vec2 artUV;
+void main() {
+  // The portrait framing can extend above the painting. Fade the sky edge
+  // into the shell behind the transparent canvas instead of stretching stars.
+  vec2 outside = max(max(-artUV, artUV - 1.), 0.);
+  float alpha = 1. - smoothstep(0., 0.12, max(outside.x, outside.y));
+  gl_FragColor = vec4(texture2D(dawn, clamp(artUV, 0., 1.)).rgb, alpha);
+  #include <colorspace_fragment>
+}`;
+
+interface ReferenceSkyProps {
+  map: Texture;
+  centerX: number;
+  centerY: number;
+  width: number;
+  height: number;
+}
+
+export function ReferenceSky({ map, centerX, centerY, width, height }: ReferenceSkyProps) {
+  const uniforms = useMemo(
+    () => ({ dawn: { value: map }, artFrame: { value: [centerX, centerY, width, height] } }),
+    [map, centerX, centerY, width, height],
+  );
+  return (
+    <mesh name="dawn-sky" renderOrder={-1} frustumCulled={false}>
+      <planeGeometry args={[2, 2]} />
+      <shaderMaterial
+        vertexShader={skyVertex}
+        fragmentShader={skyFragment}
+        uniforms={uniforms}
+        transparent
+        toneMapped={false}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}

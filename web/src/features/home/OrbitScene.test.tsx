@@ -131,7 +131,7 @@ it('reframes the mounted, paused scene for desktop and portrait Projects', async
   const { container } = render(<App />);
   await screen.findByRole('button', { name: 'Play animation' });
   const station = container.querySelector('[name="station-carrier"]');
-  fireEvent.click(screen.getByRole('link', { name: 'Explore projects' }));
+  fireEvent.click(screen.getByRole('link', { name: 'Projects' }));
   expect(lifecycle.camera.position.set).toHaveBeenLastCalledWith(0, -9 * 0.17, 10);
   lifecycle.viewport.width = 5;
   fireEvent.click(screen.getByRole('link', { name: 'Team' }));

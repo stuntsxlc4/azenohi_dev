@@ -24,6 +24,7 @@ const textures = {
   density: new Texture(),
   reliefOcean: new Texture(),
   atmosphere: new Texture(),
+  dawn: new Texture(),
   regionAlbedo: new Texture(),
   regionLights: new Texture(),
 };
@@ -113,4 +114,21 @@ it('places sunrise on the curved limb and keeps city lights attached to the rota
   scene.frame(null, 1);
   expect(restoredPhase.value).toBeCloseTo(phase.value, 8);
   expect(urls.mock.lastCall?.[0]).toContain('/home/planet/europe-albedo.webp');
+});
+
+it('shares the reference frame between the Home sky and globe and preserves the mounted terrain on navigation', () => {
+  const { container, rerender } = render(<Planet moving={false} sunrise />);
+  const mesh = container.querySelector('mesh[name="earth-surface"]');
+  const material = mesh?.querySelector('shaderMaterial');
+  expect(mesh).toBeTruthy();
+  expect(textures.dawn.colorSpace).toBe(SRGBColorSpace);
+  expect(container.querySelector('mesh[name="dawn-sky"]')).toBeTruthy();
+  expect(container.querySelector('mesh[name="solar-disc"]')).toBeNull();
+  expect(container.querySelector('mesh[name="earth-atmosphere"]')).toBeNull();
+  expect(Number(mesh?.parentElement?.getAttribute('scale'))).toBeCloseTo(3818 / 80);
+  rerender(<Planet moving={false} />);
+  expect(container.querySelector('mesh[name="earth-surface"]')).toBe(mesh);
+  expect(mesh?.querySelector('shaderMaterial')).not.toBe(material);
+  expect(container.querySelector('mesh[name="dawn-sky"]')).toBeNull();
+  expect(container.querySelector('mesh[name="earth-atmosphere"]')).toBeTruthy();
 });

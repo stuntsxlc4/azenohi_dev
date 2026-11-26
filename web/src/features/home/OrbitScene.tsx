@@ -17,14 +17,14 @@ interface MotionProps {
 }
 
 const landscapeFrames = {
-  home: { cameraY: 0, stationX: 0.34, stationY: 0.24, scale: 0.25 },
+  home: { cameraY: -0.027, stationX: 0.424, stationY: 0.229, scale: 0.286 },
   team: { cameraY: -0.17, stationX: 0.31, stationY: 0.14, scale: 0.18 },
   projects: { cameraY: -0.17, stationX: 0.33, stationY: 0.11, scale: 0.18 },
   detail: { cameraY: -0.13, stationX: 0.35, stationY: 0.16, scale: 0.17 },
   caseStudy: { cameraY: -0.15, stationX: 0.43, stationY: 0.19, scale: 0.09 },
 };
 const portraitFrames: typeof landscapeFrames = {
-  home: { cameraY: 0, stationX: 0.19, stationY: 0.235, scale: 0.29 },
+  home: { cameraY: -0.16, stationX: 0.29, stationY: -0.08, scale: 0.29 },
   team: { cameraY: -0.29, stationX: 0.28, stationY: -0.058, scale: 0.065 },
   projects: { cameraY: -0.3, stationX: 0.3, stationY: -0.1, scale: 0.075 },
   detail: { cameraY: -0.22, stationX: 0.28, stationY: 0.03, scale: 0.065 },
@@ -103,6 +103,8 @@ function Orbit({
   // Normalized placements keep the original orbital animation independent of route framing.
   const frames = portrait ? portraitFrames : landscapeFrames;
   const frame = frames[view];
+  const isHome = view === 'home';
+  const routeX = isHome && !portrait ? width * 0.01 : 0;
   const routeY = height * frame.cameraY;
   const stationX = width * frame.stationX;
   const stationY = height * frame.stationY;
@@ -113,7 +115,7 @@ function Orbit({
     if (!placed.current || !parallax || !moving) {
       mount.position.set(stationX, stationY, 1);
       mount.scale.setScalar(stationSize);
-      camera.position.set(0, routeY, camera.position.z);
+      camera.position.set(routeX, routeY, camera.position.z);
       placed.current = true;
     }
     if (active) invalidate();
@@ -124,6 +126,7 @@ function Orbit({
     mount,
     moving,
     parallax,
+    routeX,
     routeY,
     stationX,
     stationY,
@@ -133,7 +136,7 @@ function Orbit({
     if (!active || !moving || !ring.current || !station.current) return;
     if (parallax) {
       const step = Math.min(delta, 0.05);
-      const cameraX = pointer.current.x * 0.034;
+      const cameraX = routeX + pointer.current.x * 0.034;
       const cameraY = routeY - pointer.current.y * 0.023;
       const approach = (value: number, target: number, speed: number) =>
         Math.abs(value - target) < 0.001 ? target : MathUtils.damp(value, target, speed, step);
@@ -191,10 +194,14 @@ function Orbit({
   });
   return (
     <>
-      <Planet moving={moving} />
+      <Planet moving={moving} sunrise={isHome} cameraX={routeX} cameraY={routeY} />
       <ReflectedLight />
       <hemisphereLight args={['#a4bbd0', '#526b84', 0.38]} />
-      <directionalLight position={[-5, 1, 1.2]} intensity={2.55} color="#ffb88e" />
+      <directionalLight
+        position={[-5, 1, 1.2]}
+        intensity={isHome ? 3.4 : 2.55}
+        color={isHome ? '#ff9274' : '#ffb88e'}
+      />
       <directionalLight position={[1, 2, -4]} intensity={1.55} color="#a0bdd7" />
       <primitive object={mount}>
         <group ref={station} name="station-carrier">

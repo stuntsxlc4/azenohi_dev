@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
-test('navigates with menu, CTA, direct entry, refresh and history', async ({ page }) => {
+test('navigates with menu, wordmark, direct entry, refresh and history', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('navigation').getByRole('link', { name: 'Team', exact: true }).click();
   await expect(page).toHaveURL('/team');
@@ -17,8 +17,7 @@ test('navigates with menu, CTA, direct entry, refresh and history', async ({ pag
   await page.goForward();
   await expect(page).toHaveURL('/team');
   await page.getByRole('link', { name: 'AzenoHI.dev home' }).click();
-  await page.getByRole('link', { name: 'Meet the team' }).click();
-  await expect(page).toHaveURL('/team');
+  await expect(page).toHaveURL('/');
   await page.goto('/team');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('People × AI');
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
@@ -67,7 +66,7 @@ test('opens all project details and restores the invoking card on the persistent
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Play animation' })).toBeVisible();
   const canvas = await page.locator('canvas').elementHandle();
-  await page.getByRole('link', { name: 'Explore projects' }).click();
+  await page.getByRole('link', { name: 'Projects', exact: true }).click();
   const cards = page.locator('.project-card');
   await expect(cards).toHaveCount(6);
   const names = await cards.locator('h2').allTextContents();
